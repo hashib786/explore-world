@@ -133,5 +133,27 @@
     "imageCover": "tour-9-cover.jpg",
     "images": ["tour-9-1.jpg", "tour-9-2.jpg", "tour-9-3.jpg"],
     "startDates": ["2021-12-16,10:00", "2022-01-16,10:00", "2022-12-12,10:00"]
+  },
+  {
+    "id": 1691291780871,
+    "name": "The Forest Hiker",
+    "duration": 5,
+    "maxGroupSize": 25,
+    "difficulty": "easy",
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 37,
+    "price": 397,
+    "summary": "Breathtaking hike through the Canadian Banff National Park"
+  },
+  {
+    "id": 1691291810860,
+    "name": "The Forest Hiker",
+    "duration": 5,
+    "maxGroupSize": 25,
+    "difficulty": "easy",
+    "ratingsAverage": 4.7,
+    "ratingsQuantity": 37,
+    "price": 397,
+    "summary": "Breathtaking hike through the Canadian Banff National Park"
   }
 ]
