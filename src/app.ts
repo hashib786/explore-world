@@ -10,7 +10,7 @@ const app = express();
 
 // Middlware
 app.use(express.json());
-app.use(morgan("dev"));
+process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 app.use(express.static(join(currentWorkingDirectory, "public")));
 
 // Routes
