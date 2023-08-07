@@ -123,21 +123,17 @@ const deleteUser = (req: Request, res: Response) => {
     .json({ status: "error", message: "This route is not defined." });
 };
 
-app.route("/api/v1/tours").get(getAllTour).post(createTour);
+const tourRouter = express.Router();
+const userRouter = express.Router();
 
-app
-  .route("/api/v1/tours/:id")
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+tourRouter.route("/").get(getAllTour).post(createTour);
+tourRouter.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
 
-app.route("/api/v1/users").get(getAllUser).post(createUser);
+userRouter.route("/").get(getAllUser).post(createUser);
+userRouter.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
 
-app
-  .route("/api/v1/users/:id")
-  .get(getUser)
-  .patch(updateUser)
-  .delete(deleteUser);
+app.use("/api/v1/tours", tourRouter);
+app.use("/api/v1/users", userRouter);
 
 // Lisning port
 const PORT = 3000;
