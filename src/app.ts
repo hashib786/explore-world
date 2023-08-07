@@ -1,12 +1,24 @@
 import fs from "fs";
 import express, { Request, Response } from "express";
 import { join } from "path";
+import morgan from "morgan";
 
 const app = express();
-app.use(express.json());
+
+// Middlware
+app.use(
+  express.json({
+    limit: "10kb",
+  })
+);
+
+app.use(morgan("dev"));
+
 const currentWorkingDirectory = process.cwd();
 
+// Routes
 // Read Json File
+
 const tours: any[] = JSON.parse(
   fs.readFileSync(
     join(currentWorkingDirectory, "/dev-data/data/tours-simple.json"),
@@ -93,6 +105,7 @@ app
   .patch(updateTour)
   .delete(deleteTour);
 
+// Lisning port
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`App listening on ${PORT}`);
