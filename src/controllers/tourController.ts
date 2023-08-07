@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import fs from "fs";
 import { join } from "path";
-
-const currentWorkingDirectory = process.cwd();
+import { currentWorkingDirectory } from "../utils/utility";
 
 const tours: any[] = JSON.parse(
   fs.readFileSync(
@@ -22,6 +21,17 @@ export const checkId = (
     return res.status(404).json({
       status: "fail",
       message: "Tour not found",
+    });
+  }
+  next();
+};
+
+export const checkBody = (req: Request, res: Response, next: NextFunction) => {
+  const { name, price } = req.body;
+  if (!name || !price) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Name and price are required",
     });
   }
   next();

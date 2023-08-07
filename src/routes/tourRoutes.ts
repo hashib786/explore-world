@@ -1,5 +1,6 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import {
+  checkBody,
   checkId,
   createTour,
   deleteTour,
@@ -12,7 +13,7 @@ const router = express.Router();
 
 router.param("id", checkId);
 
-router.route("/").get(getAllTour).post(createTour);
+router.route("/").get(getAllTour).post(checkBody, createTour);
 router.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
 
 export default router;

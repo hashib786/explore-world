@@ -3,17 +3,15 @@ import morgan from "morgan";
 
 import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
+import { currentWorkingDirectory } from "./utils/utility";
+import { join } from "path";
 
 const app = express();
 
 // Middlware
-app.use(
-  express.json({
-    limit: "10kb",
-  })
-);
-
+app.use(express.json());
 app.use(morgan("dev"));
+app.use(express.static(join(currentWorkingDirectory, "public")));
 
 // Routes
 app.use("/api/v1/tours", tourRouter);
