@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import fs from "fs";
 import { join } from "path";
 
@@ -10,6 +10,22 @@ const tours: any[] = JSON.parse(
     "utf-8"
   )
 );
+
+export const checkId = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  value: any
+) => {
+  const tour = tours.find((ele) => ele.id === +value);
+  if (!tour) {
+    return res.status(404).json({
+      status: "fail",
+      message: "Tour not found",
+    });
+  }
+  next();
+};
 
 export const getAllTour = (req: Request, res: Response) => {
   res.status(200).json({
@@ -24,12 +40,6 @@ export const getAllTour = (req: Request, res: Response) => {
 export const getTour = (req: Request, res: Response) => {
   const { id } = req.params;
   const tour = tours.find((ele) => ele.id === +id);
-  if (!tour) {
-    return res.status(404).json({
-      status: "fail",
-      message: "Tour not found",
-    });
-  }
   res.status(200).json({
     status: "success",
     data: {
@@ -61,8 +71,6 @@ export const createTour = (req: Request, res: Response) => {
 export const updateTour = (req: Request, res: Response) => {
   const { id } = req.params;
   const tour = tours.find((ele) => ele.id === +id);
-  if (!tour)
-    return res.status(404).json({ status: "fail", message: "Tour not found" });
   res.status(201).json({
     status: "success",
     data: {
@@ -74,8 +82,6 @@ export const updateTour = (req: Request, res: Response) => {
 export const deleteTour = (req: Request, res: Response) => {
   const { id } = req.params;
   const tour = tours.find((ele) => ele.id === +id);
-  if (!tour)
-    return res.status(404).json({ status: "fail", message: "Tour not found" });
   res.status(204).json({
     status: "success",
     data: null,
