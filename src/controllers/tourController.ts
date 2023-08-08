@@ -6,8 +6,15 @@ import Tour from "../models/tourModel";
 
 export const getAllTour = async (req: Request, res: Response) => {
   try {
-    const tours = await Tour.find();
+    // Build Query
+    const queryObj = { ...req.query };
+    const excludeFeild = ["page", "sort", "limit", "fields"];
+    excludeFeild.forEach((ele) => delete queryObj[ele]);
 
+    const query = Tour.find(queryObj);
+
+    // Excute the query
+    const tours = await query;
     res.status(200).json({
       status: "success",
       result: tours.length,
