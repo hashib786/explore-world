@@ -12,41 +12,42 @@ const tours: any[] = JSON.parse(
   )
 );
 
-export const checkId = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-  value: any
-) => {
-  const tour = tours.find((ele) => ele.id === +value);
-  if (!tour) {
-    return res.status(404).json({
+export const getAllTour = async (req: Request, res: Response) => {
+  try {
+    const tours = await Tour.find();
+
+    res.status(200).json({
+      status: "success",
+      result: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
       status: "fail",
-      message: "Tour not found",
+      error: error,
     });
   }
-  next();
 };
 
-export const getAllTour = (req: Request, res: Response) => {
-  res.status(200).json({
-    status: "success",
-    result: tours.length,
-    data: {
-      tours,
-    },
-  });
-};
-
-export const getTour = (req: Request, res: Response) => {
+export const getTour = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const tour = tours.find((ele) => ele.id === +id);
-  res.status(200).json({
-    status: "success",
-    data: {
-      tour,
-    },
-  });
+  try {
+    const tour = await Tour.findById(id);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        tour,
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      error: error,
+    });
+  }
 };
 
 export const createTour = async (req: Request, res: Response) => {
