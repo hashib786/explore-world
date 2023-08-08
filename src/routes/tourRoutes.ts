@@ -12,16 +12,8 @@ const router = express.Router();
 
 // router.param("id", checkId);
 
-router
-  .route("/")
-  .get(getAllTour)
-  .post(createTour)
-  .delete(async (req, res, next) => {
-    await Tour.deleteMany();
-    res.status(204).json({
-      status: "success",
-    });
-  });
+router.route("/").get(getAllTour).post(createTour);
+
 router.route("/:id").get(getTour).patch(updateTour).delete(deleteTour);
 
 export default router;
