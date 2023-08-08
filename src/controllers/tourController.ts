@@ -3,6 +3,8 @@ import fs from "fs";
 import { join } from "path";
 import { currentWorkingDirectory } from "../utils/utility";
 
+import Tour from "../models/tourModel";
+
 const tours: any[] = JSON.parse(
   fs.readFileSync(
     join(currentWorkingDirectory, "/dev-data/data/tours-simple.json"),
@@ -21,17 +23,6 @@ export const checkId = (
     return res.status(404).json({
       status: "fail",
       message: "Tour not found",
-    });
-  }
-  next();
-};
-
-export const checkBody = (req: Request, res: Response, next: NextFunction) => {
-  const { name, price } = req.body;
-  if (!name || !price) {
-    return res.status(400).json({
-      status: "fail",
-      message: "Name and price are required",
     });
   }
   next();
@@ -58,24 +49,22 @@ export const getTour = (req: Request, res: Response) => {
   });
 };
 
-export const createTour = (req: Request, res: Response) => {
-  const newTour = { id: Date.now(), ...req.body };
-  tours.push(newTour);
+export const createTour = async (req: Request, res: Response) => {
+  try {
+    const newTour = await Tour.create(req.body);
 
-  fs.writeFile(
-    join(currentWorkingDirectory, "/dev-data/data/tours-simple.json"),
-    JSON.stringify(tours),
-    (err) => {
-      console.log("Creting file i got error: " + err);
-    }
-  );
-
-  res.status(201).json({
-    status: "success",
-    data: {
-      newTour,
-    },
-  });
+    res.status(201).json({
+      status: "success",
+      data: {
+        newTour,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "fail",
+      error: "Invalid data coming",
+    });
+  }
 };
 
 export const updateTour = (req: Request, res: Response) => {

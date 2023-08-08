@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 
 const TourSchema = new mongoose.Schema({
   name: {
-    type: "string",
+    type: String,
     required: [true, "A tour must have name"],
+    unique: true,
   },
   price: {
     type: Number,
