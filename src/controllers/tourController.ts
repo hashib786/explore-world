@@ -1,8 +1,17 @@
 import { NextFunction, Request, Response } from "express";
-import { join } from "path";
-import { currentWorkingDirectory } from "../utils/utility";
 
 import Tour from "../models/tourModel";
+
+export const aliasTopTour = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  req.query.limit = "5";
+  req.query.sort = "-ratingsAverage,price";
+  req.query.fields = "name,price,ratingsAverage,summary,difficulty";
+  next();
+};
 
 export const getAllTour = async (req: Request, res: Response) => {
   try {
