@@ -6,12 +6,25 @@ import Tour from "../models/tourModel";
 
 export const getAllTour = async (req: Request, res: Response) => {
   try {
-    // Build Query
-    const queryObj = { ...req.query };
+    // 1. Filter
+    let queryObj = { ...req.query };
     const excludeFeild = ["page", "sort", "limit", "fields"];
     excludeFeild.forEach((ele) => delete queryObj[ele]);
 
-    const query = Tour.find(queryObj);
+    // Advance query Replace Directly in query
+    // localhost:3000/api/v1/tours?price[lte]=500 writing query like that replace to localhost:3000/api/v1/tours?price[$lte]=500
+    // const queryOpra = ["lt", "lte", "gt", "gte"];
+    // queryOpra.forEach((ele) => {
+    //   queryStr = queryStr.replaceAll(ele, "$" + ele);
+    // });
+    let query = Tour.find(queryObj);
+
+    // 2. Sort
+    let { sort } = req.query;
+    if (sort && typeof sort === "string") {
+      sort = sort.replaceAll(",", " ");
+      query = query.sort(sort);
+    } else query = query.sort("-createdAt");
 
     // Excute the query
     const tours = await query;
