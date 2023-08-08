@@ -26,6 +26,14 @@ export const getAllTour = async (req: Request, res: Response) => {
       query = query.sort(sort);
     } else query = query.sort("-createdAt");
 
+    // 2. Selecting Fields
+    let { fields } = req.query;
+    if (fields && typeof fields === "string") {
+      fields = fields.replaceAll(",", " ");
+      query = query.select(fields);
+    } else query = query.select("-__v");
+
+    Tour.find({ difficulty: { $in: ["difficult", "medium"] } });
     // Excute the query
     const tours = await query;
     res.status(200).json({
