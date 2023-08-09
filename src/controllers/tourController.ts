@@ -5,7 +5,7 @@ import APIfeature from "../utils/APIfeature";
 
 export const aliasTopTour = (
   req: Request,
-  res: Response,
+  _: any, // @ts-ignore
   next: NextFunction
 ) => {
   req.query.limit = "5";
@@ -106,6 +106,52 @@ export const deleteTour = async (req: Request, res: Response) => {
     res.status(204).json({
       status: "success",
       data: null,
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      error: error,
+    });
+  }
+};
+
+export const getTourStats = async (req: Request, res: Response) => {
+  try {
+    const stats = await Tour.aggregate([
+      { $match: { price: { $gte: 1000 } } },
+      {
+        $group: {
+          _id: { $toUpper: "$difficulty" },
+          numTours: { $sum: 1 },
+          numRatings: { $sum: "$ratingsQuantity" },
+          avgRating: { $avg: "$ratingsAverage" },
+          avgPrice: { $avg: "$price" },
+          minPrice: { $min: "$price" },
+          maxPrice: { $max: "$price" },
+        },
+      },
+    ]);
+
+    // const stats = await Tour.aggregate([
+    //   {
+    //     $match: { ratingsAverage: { $gte: 4.5 } },
+    //   },
+    //   {
+    //     $group: {
+    //       _id: null,
+    //       numTours: { $sum: 1 },
+    //       numRatings: { $sum: "$ratingsQuantity" },
+    //       avgRating: { $avg: "$ratingsAverage" },
+    //       avgPrice: { $avg: "$price" },
+    //       minPrice: { $min: "$price" },
+    //       maxPrice: { $max: "$price" },
+    //     },
+    //   },
+    // ]);
+
+    res.status(200).json({
+      status: "success",
+      data: { stats },
     });
   } catch (error) {
     res.status(404).json({
