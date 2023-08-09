@@ -130,6 +130,12 @@ export const getTourStats = async (req: Request, res: Response) => {
           maxPrice: { $max: "$price" },
         },
       },
+      {
+        $sort: { avgPrice: 1 },
+      },
+      // {
+      //   $match: { _id: { $ne: 'EASY' } }
+      // }
     ]);
 
     res.status(200).json({
