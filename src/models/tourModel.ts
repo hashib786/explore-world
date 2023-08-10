@@ -1,4 +1,5 @@
 import mongoose, { Model } from "mongoose";
+import slugify from "slugify";
 
 const TourSchema = new mongoose.Schema(
   {
@@ -70,12 +71,22 @@ const TourSchema = new mongoose.Schema(
 );
 
 /*
-A virtual property in Mongoose is a calculated field that doesn't store data in the database. It's defined on a schema, and your provided code example computes a virtual property called durationWeeks, which calculates the tour duration in weeks based on the existing duration field. This calculated value isn't stored but is available when you access tour.durationWeeks. 
-Note : this is not accesable when you query 
+  A virtual property in Mongoose is a calculated field that doesn't store data in the database. It's defined on a schema, and your provided code example computes a virtual property called durationWeeks, which calculates the tour duration in weeks based on the existing duration field. This calculated value isn't stored but is available when you access tour.durationWeeks. 
+  Note : this is not accesable when you query 
 */
 TourSchema.virtual("durationWeeks").get(function () {
   if (typeof this.duration === "number") return (this.duration / 7).toFixed(2);
   return null;
+});
+
+/* **** Pre middleware in Mongoose: ****
+  When Triggered: Before save, update, validate, or remove operations on documents.
+  When Not Triggered: During bulk writes, direct DB operations, and inserting multiple documents simultaneously.
+  Note : next() --> calling only next middleware not it stop saving documents in database
+*/
+TourSchema.pre("save", function (next) {
+  if (this.name) this.slug = slugify(this.name, { lower: true });
+  next();
 });
 
 const Tour = mongoose.model("Tour", TourSchema);
