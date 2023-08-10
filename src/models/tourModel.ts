@@ -89,5 +89,12 @@ TourSchema.pre("save", function (next) {
   next();
 });
 
+// This is post middleware it calling same like pre middleware you also get value
+TourSchema.post("save", function (val, next) {
+  console.log(val);
+  console.log(val.isSelected("slug"));
+  next();
+});
+
 const Tour = mongoose.model("Tour", TourSchema);
 export default Tour;
