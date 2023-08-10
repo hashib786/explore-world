@@ -64,8 +64,19 @@ const TourSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // Add timestamps option here
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+/*
+A virtual property in Mongoose is a calculated field that doesn't store data in the database. It's defined on a schema, and your provided code example computes a virtual property called durationWeeks, which calculates the tour duration in weeks based on the existing duration field. This calculated value isn't stored but is available when you access tour.durationWeeks. 
+Note : this is not accesable when you query 
+*/
+TourSchema.virtual("durationWeeks").get(function () {
+  if (typeof this.duration === "number") return (this.duration / 7).toFixed(2);
+  return null;
+});
 
 const Tour = mongoose.model("Tour", TourSchema);
 export default Tour;
