@@ -74,24 +74,59 @@ const TourSchema = new mongoose.Schema(
   A virtual property in Mongoose is a calculated field that doesn't store data in the database. It's defined on a schema, and your provided code example computes a virtual property called durationWeeks, which calculates the tour duration in weeks based on the existing duration field. This calculated value isn't stored but is available when you access tour.durationWeeks. 
   Note : this is not accesable when you query 
 */
+
 TourSchema.virtual("durationWeeks").get(function () {
   if (typeof this.duration === "number") return (this.duration / 7).toFixed(2);
   return null;
 });
 
-/* **** Pre middleware in Mongoose: ****
+/* **** middleware in Mongoose: ****
+
+  **** Document middleware
+    validate
+    save
+    remove
+    updateOne
+    deleteOne
+    init (note: init hooks are synchronous)
+
+  **** Query middleware
+    count
+    countDocuments
+    deleteMany
+    deleteOne
+    estimatedDocumentCount
+    find
+    findOne
+    findOneAndDelete
+    findOneAndRemove
+    findOneAndReplace
+    findOneAndUpdate
+    remove
+    replaceOne
+    update
+    updateOne
+    updateMany
+    validate
+
   When Triggered: Before save, update, validate, or remove operations on documents.
   When Not Triggered: During bulk writes, direct DB operations, and inserting multiple documents simultaneously.
-  Note : next() --> calling only next middleware not it stop saving documents in database
+  Note : next() --> calling only next middleware not it stop saving documents in database, you can add any pre middlware like save, findOneAndDelete and many more you can find in suggestions
 */
 TourSchema.pre("save", function (next) {
   if (this.name) this.slug = slugify(this.name, { lower: true });
   next();
 });
 
+// This is Query Middleware
+// TourSchema.pre("findOneAndDelete", function (next) {
+//   console.log("********************");
+//   console.log(this, "************");
+//   next();
+// });
+
 // This is post middleware it calling same like pre middleware you also get value
 TourSchema.post("save", function (val, next) {
-  console.log(val);
   console.log(val.isSelected("slug"));
   next();
 });

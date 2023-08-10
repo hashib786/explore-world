@@ -102,7 +102,6 @@ export const deleteTour = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const tour = await Tour.findByIdAndDelete(id);
-    console.log(tour);
     res.status(204).json({
       status: "success",
       data: null,
