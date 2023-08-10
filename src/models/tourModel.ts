@@ -125,11 +125,41 @@ TourSchema.pre("save", function (next) {
 //   next();
 // });
 
+// i created this function because i want to excute this conde in two time for find and find one also
+function myMiddleware(
+  this: mongoose.Query<any, any, {}, any, "find">,
+  next: Function
+) {
+  this.find({ secretTour: { $ne: true } }).select("-description");
+  next();
+}
+
+TourSchema.pre("find", function (next) {
+  myMiddleware.call(this, next);
+});
+TourSchema.pre("findOne", function (next) {
+  myMiddleware.call(this, next);
+});
+// TourSchema.pre("find", function (next){
+//   this
+// });
+
 // This is post middleware it calling same like pre middleware you also get value
 TourSchema.post("save", function (val, next) {
   console.log(val.isSelected("slug"));
   next();
 });
+
+// function myFunction(this: any) {
+//   console.log(this.someProperty);
+// }
+
+// const myObject = {
+//   someProperty: "Hello, world!"
+// };
+
+// const boundFunction = myFunction.bind(myObject);
+// boundFunction(); // Outputs: Hello, world!
 
 const Tour = mongoose.model("Tour", TourSchema);
 export default Tour;
