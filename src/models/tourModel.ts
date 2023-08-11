@@ -1,6 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import slugify from "slugify";
 
+// All validation related things is written in validator section in mongoose
 const TourSchema = new mongoose.Schema(
   {
     name: {
@@ -16,6 +17,7 @@ const TourSchema = new mongoose.Schema(
     duration: {
       type: Number,
       required: [true, "A tour must have a duration"],
+      cast: "{VALUE} is not a number",
     },
     maxGroupSize: {
       type: Number,
