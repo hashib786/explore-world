@@ -118,7 +118,7 @@ export const getTourStats = async (req: Request, res: Response) => {
   try {
     const stats = await Tour.aggregate([
       // in match you can filter and then you can do anything
-      { $match: { price: { $gte: 1000 } } },
+      // { $match: { price: { $gte: 1000 } } },
       // grouping given functionality so whichone you filtered you perfomed some action in grouping
       {
         $group: {
