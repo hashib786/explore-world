@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
-import ITour from "./tourInterface";
+import ITour from "../interfaces/tourInterface";
 
 // All validation related things is written in validator section in mongoose
 const TourSchema = new mongoose.Schema<ITour>(
