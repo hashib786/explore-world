@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import Tour from "../models/tourModel";
 import APIfeature from "../utils/APIfeature";
 import catchAsync from "../utils/cathAsync";
+import AppError from "../utils/appError";
 
 export const aliasTopTour = (
   req: Request,
@@ -38,6 +39,9 @@ export const getTour = catchAsync(
     const { id } = req.params;
     const tour = await Tour.findById(id);
 
+    if (!tour)
+      return next(new AppError("No tour found with that id : " + id, 404));
+
     res.status(200).json({
       status: "success",
       data: {
@@ -58,29 +62,40 @@ export const createTour = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const updateTour = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const tour = await Tour.findByIdAndUpdate(id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+export const updateTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const tour = await Tour.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
-  res.status(200).json({
-    status: "success",
-    data: {
-      tour,
-    },
-  });
-});
+    if (!tour)
+      return next(new AppError("No tour found with that id : " + id, 404));
 
-export const deleteTour = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const tour = await Tour.findByIdAndDelete(id);
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+    res.status(200).json({
+      status: "success",
+      data: {
+        tour,
+      },
+    });
+  }
+);
+
+export const deleteTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const tour = await Tour.findByIdAndDelete(id);
+
+    if (!tour)
+      return next(new AppError("No tour found with that id : " + id, 404));
+
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  }
+);
 
 export const getTourStats = catchAsync(async (req: Request, res: Response) => {
   const stats = await Tour.aggregate([
