@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import Tour from "../models/tourModel";
 import APIfeature from "../utils/APIfeature";
+import catchAsync from "../utils/cathAsync";
 
 export const aliasTopTour = (
   req: Request,
@@ -14,34 +15,27 @@ export const aliasTopTour = (
   next();
 };
 
-export const getAllTour = async (req: Request, res: Response) => {
-  try {
-    const feature = new APIfeature(Tour.find(), req.query)
-      .filter()
-      .sort()
-      .feilds()
-      .pagination();
+export const getAllTour = catchAsync(async (req: Request, res: Response) => {
+  const feature = new APIfeature(Tour.find(), req.query)
+    .filter()
+    .sort()
+    .feilds()
+    .pagination();
 
-    // Excute the query
-    const tours = await feature.query;
-    res.status(200).json({
-      status: "success",
-      result: tours.length,
-      data: {
-        tours,
-      },
-    });
-  } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      error: error,
-    });
-  }
-};
+  // Excute the query
+  const tours = await feature.query;
+  res.status(200).json({
+    status: "success",
+    result: tours.length,
+    data: {
+      tours,
+    },
+  });
+});
 
-export const getTour = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  try {
+export const getTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
     const tour = await Tour.findById(id);
 
     res.status(200).json({
@@ -50,118 +44,85 @@ export const getTour = async (req: Request, res: Response) => {
         tour,
       },
     });
-  } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      error: error,
-    });
   }
-};
+);
 
-export const createTour = async (req: Request, res: Response) => {
-  try {
-    const newTour = await Tour.create(req.body);
+export const createTour = catchAsync(async (req: Request, res: Response) => {
+  const newTour = await Tour.create(req.body);
 
-    res.status(201).json({
-      status: "success",
-      data: {
-        newTour,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: "fail",
-      error,
-    });
-  }
-};
+  res.status(201).json({
+    status: "success",
+    data: {
+      newTour,
+    },
+  });
+});
 
-export const updateTour = async (req: Request, res: Response) => {
+export const updateTour = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  try {
-    const tour = await Tour.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+  const tour = await Tour.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+  });
 
-    res.status(200).json({
-      status: "success",
-      data: {
-        tour,
-      },
-    });
-  } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      error: error,
-    });
-  }
-};
+  res.status(200).json({
+    status: "success",
+    data: {
+      tour,
+    },
+  });
+});
 
-export const deleteTour = async (req: Request, res: Response) => {
+export const deleteTour = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  try {
-    const tour = await Tour.findByIdAndDelete(id);
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
-  } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      error: error,
-    });
-  }
-};
+  const tour = await Tour.findByIdAndDelete(id);
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
 
-export const getTourStats = async (req: Request, res: Response) => {
-  try {
-    const stats = await Tour.aggregate([
-      // in match you can filter and then you can do anything
-      // { $match: { price: { $gte: 1000 } } },
-      // grouping given functionality so whichone you filtered you perfomed some action in grouping
-      {
-        $group: {
-          // _id give you sepration like here all group seprated by difficulty --> easy, medium, difficult
-          // $toUpper --> convert to uppercase string
-          _id: { $toUpper: "$difficulty" },
-          // $sum --> for counting anythng like eg : 1 --> added only one
-          // $sum --> for counting $ratingsQuantity field and that value
-          numTours: { $sum: 1 },
-          numRatings: { $sum: "$ratingsQuantity" },
-          // $avg --> this is for avarage
-          avgRating: { $avg: "$ratingsAverage" },
-          avgPrice: { $avg: "$price" },
-          // $min --> finding minimum
-          minPrice: { $min: "$price" },
-          // $max --> finding maximum
-          maxPrice: { $max: "$price" },
-        },
+export const getTourStats = catchAsync(async (req: Request, res: Response) => {
+  const stats = await Tour.aggregate([
+    // in match you can filter and then you can do anything
+    // { $match: { price: { $gte: 1000 } } },
+    // grouping given functionality so whichone you filtered you perfomed some action in grouping
+    {
+      $group: {
+        // _id give you sepration like here all group seprated by difficulty --> easy, medium, difficult
+        // $toUpper --> convert to uppercase string
+        _id: { $toUpper: "$difficulty" },
+        // $sum --> for counting anythng like eg : 1 --> added only one
+        // $sum --> for counting $ratingsQuantity field and that value
+        numTours: { $sum: 1 },
+        numRatings: { $sum: "$ratingsQuantity" },
+        // $avg --> this is for avarage
+        avgRating: { $avg: "$ratingsAverage" },
+        avgPrice: { $avg: "$price" },
+        // $min --> finding minimum
+        minPrice: { $min: "$price" },
+        // $max --> finding maximum
+        maxPrice: { $max: "$price" },
       },
-      {
-        // $sort --> after grouping it basically sort avgPrice(this is defined in grouping) --> 1 mean assending 0 mean descending
-        $sort: { avgPrice: 1 },
-      },
-      // you can add another filter also like $match
-      // {
-      //   $match: { _id: { $ne: 'EASY' } }
-      // }
-    ]);
+    },
+    {
+      // $sort --> after grouping it basically sort avgPrice(this is defined in grouping) --> 1 mean assending 0 mean descending
+      $sort: { avgPrice: 1 },
+    },
+    // you can add another filter also like $match
+    // {
+    //   $match: { _id: { $ne: 'EASY' } }
+    // }
+  ]);
 
-    res.status(200).json({
-      status: "success",
-      data: { stats },
-    });
-  } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      error: error,
-    });
-  }
-};
+  res.status(200).json({
+    status: "success",
+    data: { stats },
+  });
+});
 
-export const getMonthlyPlan = async (req: Request, res: Response) => {
-  try {
+export const getMonthlyPlan = catchAsync(
+  async (req: Request, res: Response) => {
     const year: number = +req.params.year;
     const plan = await Tour.aggregate([
       {
@@ -210,10 +171,5 @@ export const getMonthlyPlan = async (req: Request, res: Response) => {
       status: "success",
       data: { plan },
     });
-  } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      error: error,
-    });
   }
-};
+);

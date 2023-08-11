@@ -1,5 +1,3 @@
-import ErrorRequire from "../interfaces/ErrorRequired";
-
 class AppError extends Error {
   public status?: string | undefined;
   public isOprational?: boolean;
