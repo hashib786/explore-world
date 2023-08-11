@@ -17,4 +17,12 @@ app.use(express.static(join(currentWorkingDirectory, "public")));
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
+// Unhadled Routes
+app.all("*", (req, res, next) => {
+  res.status(404).send({
+    status: "fail",
+    message: `Can't find ${req.originalUrl} on this server`,
+  });
+});
+
 export default app;
