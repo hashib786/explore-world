@@ -1,8 +1,9 @@
-import mongoose, { Model } from "mongoose";
+import mongoose from "mongoose";
 import slugify from "slugify";
+import ITour from "./tourInterface";
 
 // All validation related things is written in validator section in mongoose
-const TourSchema = new mongoose.Schema(
+const TourSchema = new mongoose.Schema<ITour>(
   {
     name: {
       type: String,
@@ -44,6 +45,18 @@ const TourSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: [true, "A tour must have a price"],
+    },
+    priceDiscount: {
+      type: Number,
+      validate: {
+        //  for validot accessing this you need to define type of this so first create interface
+        // Note : This validator only runs creating time not updating time
+        validator: function (this: ITour, val: number) {
+          return val < this.price;
+        },
+        message: "Discount price {VALUE} should be below price",
+        // message: props => `${props.value} is not a valid phone number!`
+      },
     },
     summary: {
       type: String,
@@ -166,5 +179,5 @@ TourSchema.post("save", function (val, next) {
 // const boundFunction = myFunction.bind(myObject);
 // boundFunction(); // Outputs: Hello, world!
 
-const Tour = mongoose.model("Tour", TourSchema);
+const Tour = mongoose.model<ITour>("Tour", TourSchema);
 export default Tour;
