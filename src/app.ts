@@ -5,8 +5,8 @@ import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
 import { currentWorkingDirectory } from "./utils/utility";
 import { join } from "path";
-import AppError from "./utils/appError";
 import errorController from "./controllers/errorController";
+import unhandledRoute from "./controllers/404route";
 
 const app = express();
 
@@ -20,11 +20,7 @@ app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
 // Unhadled Routes
-app.all("*", (req, res, next) => {
-  const err = new AppError(`Can't find ${req.originalUrl} on this server`, 404);
-  next(err);
-});
-
+app.all("*", unhandledRoute);
 app.use(errorController);
 
 export default app;
