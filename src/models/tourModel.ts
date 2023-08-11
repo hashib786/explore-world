@@ -118,13 +118,6 @@ TourSchema.pre("save", function (next) {
   next();
 });
 
-// This is Query Middleware
-// TourSchema.pre("findOneAndDelete", function (next) {
-//   console.log("********************");
-//   console.log(this, "************");
-//   next();
-// });
-
 // i created this function because i want to excute this conde in two time for find and find one also
 function myMiddleware(
   this: mongoose.Query<any, any, {}, any, "find">,
@@ -140,9 +133,12 @@ TourSchema.pre("find", function (next) {
 TourSchema.pre("findOne", function (next) {
   myMiddleware.call(this, next);
 });
-// TourSchema.pre("find", function (next){
-//   this
-// });
+
+// post middleware after all queries executed so i can't excute extra queries
+TourSchema.post("find", function (val, next) {
+  // console.log(val);
+  next();
+});
 
 // This is post middleware it calling same like pre middleware you also get value
 TourSchema.post("save", function (val, next) {
