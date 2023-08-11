@@ -6,6 +6,7 @@ import userRouter from "./routes/userRoutes";
 import { currentWorkingDirectory } from "./utils/utility";
 import { join } from "path";
 import ErrorRequire from "./interfaces/ErrorRequired";
+import AppError from "./utils/appError";
 
 const app = express();
 
@@ -20,11 +21,7 @@ app.use("/api/v1/users", userRouter);
 
 // Unhadled Routes
 app.all("*", (req, res, next) => {
-  const err: ErrorRequire = new Error(
-    `Can't find ${req.originalUrl} on this server`
-  );
-  err.statusCode = 404;
-  err.status = "fail";
+  const err = new AppError(`Can't find ${req.originalUrl} on this server`, 404);
   next(err);
 });
 
