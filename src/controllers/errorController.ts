@@ -22,6 +22,10 @@ const handleDublicateFieldsDB = (err: AppError & dublicateDBI) => {
   return new AppError(message, 400);
 };
 
+const handleValidationErrorDb = (err: AppError & dublicateDBI) => {
+  return new AppError(err.message, 400);
+};
+
 const sendErrorDev = (err: AppError, res: Response) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -65,6 +69,7 @@ const errorController = (
 
     if (err.name === "CastError") error = handleCastDbError(err);
     if (err?.code === 11000) error = handleDublicateFieldsDB(err);
+    if (err.name === "ValidationError") error = handleValidationErrorDb(err);
 
     sendErrorProd(error, res);
   }
