@@ -5,9 +5,20 @@ interface pathVal {
   path?: string;
   value?: string;
 }
+interface dublicateDBI {
+  code?: number;
+  keyValue?: {
+    name?: string;
+  };
+}
 
 const handleCastDbError = (err: AppError & pathVal) => {
   const message = `Invalid ${err?.path} ${err?.value}`;
+  return new AppError(message, 400);
+};
+
+const handleDublicateFieldsDB = (err: AppError & dublicateDBI) => {
+  const message = `Duplicate field value : (${err?.keyValue?.name}) please use another value!`;
   return new AppError(message, 400);
 };
 
@@ -40,7 +51,7 @@ const sendErrorProd = (err: AppError, res: Response) => {
 };
 
 const errorController = (
-  err: AppError,
+  err: AppError & pathVal & dublicateDBI,
   req: Request,
   res: Response,
   next: NextFunction
@@ -51,7 +62,10 @@ const errorController = (
   if (process.env.NODE_ENV === "development") sendErrorDev(err, res);
   else {
     let error = { ...err };
+
     if (err.name === "CastError") error = handleCastDbError(err);
+    if (err?.code === 11000) error = handleDublicateFieldsDB(err);
+
     sendErrorProd(error, res);
   }
 };
