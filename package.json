@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --esm ./src/server.ts",
-    "start": "nodemon --esm ./src/server.ts"
+    "start": "SET NODE_ENV=production && nodemon --esm ./src/server.ts"
   },
   "keywords": [],
   "author": "",

@@ -21,6 +21,8 @@ app.use("/api/v1/users", userRouter);
 
 // Unhadled Routes
 app.all("*", unhandledRoute);
+
+// handle globel error handling
 app.use(errorController);
 
 export default app;
