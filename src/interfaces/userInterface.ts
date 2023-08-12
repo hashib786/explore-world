@@ -4,7 +4,7 @@ interface IUser {
   email: string;
   photo?: string;
   password: string;
-  confirmPassword: string;
+  confirmPassword?: string;
 }
 
 export default IUser;

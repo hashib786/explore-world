@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcryptjs";
 import IUser from "../interfaces/userInterface";
 
 // Create a Mongoose schema for the user
@@ -20,6 +21,7 @@ const userSchema = new Schema<IUser>({
   },
   password: {
     type: String,
+    select: false,
     required: [true, "Please provide a password"],
     minLength: [8, "Password must be at least 8 characters long"],
   },
@@ -33,6 +35,16 @@ const userSchema = new Schema<IUser>({
       message: "Passwords do not match",
     },
   },
+});
+
+// Hashing Password
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 14);
+  this.confirmPassword = undefined;
+
+  next();
 });
 
 // Create and export the User model
