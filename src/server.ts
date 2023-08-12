@@ -12,6 +12,14 @@ import app from "./app";
 // Lisning port
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`App listening on ${PORT}`);
+});
+
+// Unhandled errors
+process.on("unhandledRejection", (err: Error) => {
+  console.error("Unhandled Rejection: 🔥🔥🔥 ", err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });

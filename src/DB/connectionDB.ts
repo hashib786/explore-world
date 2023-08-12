@@ -3,10 +3,8 @@ import mongoose from "mongoose";
 const URL = process.env.MONGO_URL!;
 
 const connectFunc = (): void => {
-  mongoose
-    .connect(URL)
-    .then(() => console.log("MongoDB connect"))
-    .catch((error) => console.log("MongoDB error when connecting 🔥🔥", error));
+  mongoose.connect(URL).then(() => console.log("MongoDB connect"));
+  // .catch((error) => console.log("MongoDB error when connecting 🔥🔥", error)); --> handling in server.ts
 };
 
 export default connectFunc;
