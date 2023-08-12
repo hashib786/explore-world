@@ -1,6 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import AppError from "../utils/appError";
 
+interface pathVal {
+  path?: string;
+  value?: string;
+}
+
+const handleCastDbError = (err: AppError & pathVal) => {
+  const message = `Invalid ${err?.path} ${err?.value}`;
+  return new AppError(message, 400);
+};
+
 const sendErrorDev = (err: AppError, res: Response) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -39,7 +49,11 @@ const errorController = (
   err.status = err.status || "error";
 
   if (process.env.NODE_ENV === "development") sendErrorDev(err, res);
-  else if (process.env.NODE_ENV === "production") sendErrorProd(err, res);
+  else {
+    let error = { ...err };
+    if (err.name === "CastError") error = handleCastDbError(err);
+    sendErrorProd(error, res);
+  }
 };
 
 export default errorController;
