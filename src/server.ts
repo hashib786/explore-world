@@ -6,6 +6,14 @@ dotenv.config();
 import DB from "./DB/connectionDB";
 DB();
 
+// Uncaught exceptions
+process.on("uncaughtException", (err: Error) => {
+  console.error("uncaughtException Rejection: 🔥🔥🔥 ", err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
 // import app
 import app from "./app";
 
