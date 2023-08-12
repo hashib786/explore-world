@@ -1,0 +1,41 @@
+import mongoose, { Schema } from "mongoose";
+import IUser from "../interfaces/userInterface";
+
+// Create a Mongoose schema for the user
+const userSchema = new Schema<IUser>({
+  name: {
+    type: String,
+    required: [true, "Please provide a name"],
+  },
+  email: {
+    type: String,
+    required: [true, "Please provide an email"],
+    unique: true,
+    lowercase: true,
+    // You can add additional validation for email format if needed
+  },
+  photo: {
+    type: String,
+    // You can add validation for photo URL format if needed
+  },
+  password: {
+    type: String,
+    required: [true, "Please provide a password"],
+    minLength: [8, "Password must be at least 8 characters long"],
+  },
+  confirmPassword: {
+    type: String,
+    required: [true, "Please confirm your password"],
+    validate: {
+      validator: function (this: IUser, value: string): boolean {
+        return value === this.password;
+      },
+      message: "Passwords do not match",
+    },
+  },
+});
+
+// Create and export the User model
+const User = mongoose.model<IUser>("User", userSchema);
+
+export default User;
