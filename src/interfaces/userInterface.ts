@@ -5,6 +5,10 @@ interface IUser {
   photo?: string;
   password: string;
   confirmPassword?: string;
+  isCorrectPassword(
+    candidatePassword: string,
+    hashUserPassword: string
+  ): Promise<boolean>;
 }
 
 export default IUser;

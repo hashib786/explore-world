@@ -47,6 +47,14 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// here this points to current document
+userSchema.methods.isCorrectPassword = async function (
+  candidatePassword: string,
+  hashUserPassword: string
+): Promise<Boolean> {
+  return bcrypt.compare(candidatePassword, hashUserPassword);
+};
+
 // Create and export the User model
 const User = mongoose.model<IUser>("User", userSchema);
 
