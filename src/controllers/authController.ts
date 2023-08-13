@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import catchAsync from "../utils/cathAsync";
 import User from "../models/userModel";
-import jwt from "jsonwebtoken";
+import jwt, { GetPublicKeyOrSecret, Secret } from "jsonwebtoken";
 import AppError from "../utils/appError";
 import { Types } from "mongoose";
+import { promisify } from "util";
 
 const signToken = (id: Types.ObjectId) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -67,6 +68,13 @@ export const protect = catchAsync(
       return next(
         new AppError("You are not logged in please login for get access ", 401)
       );
+
+    const verifyJwt = promisify<string, Secret | GetPublicKeyOrSecret>(
+      jwt.verify
+    );
+    const decode = await verifyJwt(token, process.env.JWT_SECRET!);
+
+    console.log(decode);
 
     next();
   }

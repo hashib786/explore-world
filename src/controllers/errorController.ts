@@ -22,9 +22,11 @@ const handleDublicateFieldsDB = (err: AppError & dublicateDBI) => {
   return new AppError(message, 400);
 };
 
-const handleValidationErrorDb = (err: AppError & dublicateDBI) => {
-  return new AppError(err.message, 400);
-};
+const handleValidationErrorDb = (err: AppError & dublicateDBI) =>
+  new AppError(err.message, 400);
+
+const handleJWTtokenError = (err: AppError & dublicateDBI) =>
+  new AppError("Invailid token please log in again", 400);
 
 const sendErrorDev = (err: AppError, res: Response) => {
   res.status(err.statusCode).json({
@@ -70,6 +72,7 @@ const errorController = (
     if (err.name === "CastError") error = handleCastDbError(err);
     if (err?.code === 11000) error = handleDublicateFieldsDB(err);
     if (err.name === "ValidationError") error = handleValidationErrorDb(err);
+    if (err.name === "JsonWebTokenError") error = handleJWTtokenError(err);
 
     sendErrorProd(error, res);
   }
