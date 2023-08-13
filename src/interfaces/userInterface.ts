@@ -5,6 +5,8 @@ interface IUser {
   photo?: string;
   password: string;
   confirmPassword?: string;
+  createdAt: Date;
+  updatedAt: Date;
   isCorrectPassword(
     candidatePassword: string,
     hashUserPassword: string

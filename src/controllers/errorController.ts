@@ -25,8 +25,11 @@ const handleDublicateFieldsDB = (err: AppError & dublicateDBI) => {
 const handleValidationErrorDb = (err: AppError & dublicateDBI) =>
   new AppError(err.message, 400);
 
-const handleJWTtokenError = (err: AppError & dublicateDBI) =>
-  new AppError("Invailid token please log in again", 400);
+const handleJWTtokenError = () =>
+  new AppError("Invailid token please log in again", 401);
+
+const handleJWTExpiredError = () =>
+  new AppError("Your Token was expired! please login", 401);
 
 const sendErrorDev = (err: AppError, res: Response) => {
   res.status(err.statusCode).json({
@@ -72,7 +75,8 @@ const errorController = (
     if (err.name === "CastError") error = handleCastDbError(err);
     if (err?.code === 11000) error = handleDublicateFieldsDB(err);
     if (err.name === "ValidationError") error = handleValidationErrorDb(err);
-    if (err.name === "JsonWebTokenError") error = handleJWTtokenError(err);
+    if (err.name === "JsonWebTokenError") error = handleJWTtokenError();
+    if (err.name === "TokenExpiredError") error = handleJWTExpiredError();
 
     sendErrorProd(error, res);
   }

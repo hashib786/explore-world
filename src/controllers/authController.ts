@@ -3,7 +3,7 @@ import catchAsync from "../utils/cathAsync";
 import User from "../models/userModel";
 import jwt, { GetPublicKeyOrSecret, Secret } from "jsonwebtoken";
 import AppError from "../utils/appError";
-import { Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import { promisify } from "util";
 
 const signToken = (id: Types.ObjectId) => {
@@ -53,6 +53,12 @@ export const login = catchAsync(
   }
 );
 
+type JWTReturn = {
+  id: ObjectId;
+  iat: number;
+  exp: number;
+};
+
 export const protect = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     let token;
@@ -72,9 +78,19 @@ export const protect = catchAsync(
     const verifyJwt = promisify<string, Secret | GetPublicKeyOrSecret>(
       jwt.verify
     );
-    const decode = await verifyJwt(token, process.env.JWT_SECRET!);
 
-    console.log(decode);
+    // jwt.verify(token, process.env.JWT_SECRET!,"dfdfds", function (err, decode : JWTReturn){
+
+    // })
+
+    const decode: JWTReturn = (await verifyJwt(
+      token,
+      process.env.JWT_SECRET!
+    )) as unknown as JWTReturn;
+
+    const freshUser = await User.findById(decode.id);
+    if (!freshUser)
+      return new AppError("User blogging token is no longer exist", 401);
 
     next();
   }
