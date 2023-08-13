@@ -4,6 +4,7 @@ import Tour from "../models/tourModel";
 import APIfeature from "../utils/APIfeature";
 import catchAsync from "../utils/cathAsync";
 import AppError from "../utils/appError";
+import { UserInRequest } from "../interfaces/util";
 
 export const aliasTopTour = (
   req: Request,
@@ -16,23 +17,26 @@ export const aliasTopTour = (
   next();
 };
 
-export const getAllTour = catchAsync(async (req: Request, res: Response) => {
-  const feature = new APIfeature(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .feilds()
-    .pagination();
+export const getAllTour = catchAsync(
+  async (req: Request & UserInRequest, res: Response) => {
+    console.log(req.user);
+    const feature = new APIfeature(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .feilds()
+      .pagination();
 
-  // Excute the query
-  const tours = await feature.query;
-  res.status(200).json({
-    status: "success",
-    result: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
+    // Excute the query
+    const tours = await feature.query;
+    res.status(200).json({
+      status: "success",
+      result: tours.length,
+      data: {
+        tours,
+      },
+    });
+  }
+);
 
 export const getTour = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

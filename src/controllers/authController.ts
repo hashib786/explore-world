@@ -3,8 +3,9 @@ import catchAsync from "../utils/cathAsync";
 import User from "../models/userModel";
 import jwt, { GetPublicKeyOrSecret, Secret } from "jsonwebtoken";
 import AppError from "../utils/appError";
-import { ObjectId, Types } from "mongoose";
+import { Types } from "mongoose";
 import { promisify } from "util";
+import { JWTReturn, UserInRequest } from "../interfaces/util";
 
 const signToken = (id: Types.ObjectId) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -54,14 +55,8 @@ export const login = catchAsync(
   }
 );
 
-type JWTReturn = {
-  id: ObjectId;
-  iat: number;
-  exp: number;
-};
-
 export const protect = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
     let token;
 
     if (
@@ -89,17 +84,18 @@ export const protect = catchAsync(
       process.env.JWT_SECRET!
     )) as unknown as JWTReturn;
 
-    const freshUser = await User.findById(decode.id);
-    if (!freshUser)
+    const currentUser = await User.findById(decode.id);
+    if (!currentUser)
       return new AppError("User blogging token is no longer exist", 401);
 
-    const isPasswordChanged = freshUser.isPasswordChanged(decode.iat);
-    console.log(isPasswordChanged, "**********");
-    console.log(isPasswordChanged, freshUser);
+    const isPasswordChanged = currentUser.isPasswordChanged(decode.iat);
+
     if (isPasswordChanged)
       return next(
         new AppError("user recently changed password! Please log in again", 401)
       );
+
+    req.user = currentUser;
 
     next();
   }
