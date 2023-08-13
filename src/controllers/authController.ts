@@ -20,6 +20,7 @@ export const signUp = catchAsync(
       photo: req.body.photo,
       password: req.body.password,
       confirmPassword: req.body.confirmPassword,
+      passwordChangeAt: req.body.passwordChangeAt,
     });
 
     const token = signToken(newUser._id);
@@ -91,6 +92,14 @@ export const protect = catchAsync(
     const freshUser = await User.findById(decode.id);
     if (!freshUser)
       return new AppError("User blogging token is no longer exist", 401);
+
+    const isPasswordChanged = freshUser.isPasswordChanged(decode.iat);
+    console.log(isPasswordChanged, "**********");
+    console.log(isPasswordChanged, freshUser);
+    if (isPasswordChanged)
+      return next(
+        new AppError("user recently changed password! Please log in again", 401)
+      );
 
     next();
   }

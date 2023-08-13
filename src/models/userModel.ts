@@ -36,6 +36,7 @@ const userSchema = new Schema<IUser>(
         message: "Passwords do not match",
       },
     },
+    passwordChangeAt: Date,
   },
   {
     timestamps: true,
@@ -58,6 +59,17 @@ userSchema.methods.isCorrectPassword = async function (
   hashUserPassword: string
 ): Promise<Boolean> {
   return bcrypt.compare(candidatePassword, hashUserPassword);
+};
+
+userSchema.methods.isPasswordChanged = function (JWTTimestamp: number) {
+  if (this.passwordChangeAt) {
+    const changeTimeStamp =
+      parseInt(this.passwordChangeAt.getTime(), 10) / 1000;
+    console.log(JWTTimestamp, changeTimeStamp);
+    return JWTTimestamp < changeTimeStamp;
+  }
+
+  return false;
 };
 
 // Create and export the User model

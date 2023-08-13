@@ -7,10 +7,12 @@ interface IUser {
   confirmPassword?: string;
   createdAt: Date;
   updatedAt: Date;
+  passwordChangeAt: Date;
   isCorrectPassword(
     candidatePassword: string,
     hashUserPassword: string
   ): Promise<boolean>;
+  isPasswordChanged(JWTTimestamp: number): boolean;
 }
 
 export default IUser;
