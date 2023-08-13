@@ -26,6 +26,11 @@ const userSchema = new Schema<IUser>(
       required: [true, "Please provide a password"],
       minLength: [8, "Password must be at least 8 characters long"],
     },
+    role: {
+      type: String,
+      enum: ["admin", "user", "guide", "lead-guide"],
+      default: "user",
+    },
     confirmPassword: {
       type: String,
       required: [true, "Please confirm your password"],

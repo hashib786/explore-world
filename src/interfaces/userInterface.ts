@@ -8,6 +8,7 @@ interface IUser {
   createdAt: Date;
   updatedAt: Date;
   passwordChangeAt: Date;
+  role: string;
   isCorrectPassword(
     candidatePassword: string,
     hashUserPassword: string

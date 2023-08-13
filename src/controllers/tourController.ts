@@ -19,7 +19,6 @@ export const aliasTopTour = (
 
 export const getAllTour = catchAsync(
   async (req: Request & UserInRequest, res: Response) => {
-    console.log(req.user);
     const feature = new APIfeature(Tour.find(), req.query)
       .filter()
       .sort()

@@ -6,6 +6,7 @@ import AppError from "../utils/appError";
 import { Types } from "mongoose";
 import { promisify } from "util";
 import { JWTReturn, UserInRequest } from "../interfaces/util";
+import IUser from "../interfaces/userInterface";
 
 const signToken = (id: Types.ObjectId) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -22,6 +23,7 @@ export const signUp = catchAsync(
       password: req.body.password,
       confirmPassword: req.body.confirmPassword,
       passwordChangeAt: req.body.passwordChangeAt,
+      role: req.body.role,
     });
 
     const token = signToken(newUser._id);
@@ -100,3 +102,14 @@ export const protect = catchAsync(
     next();
   }
 );
+
+export const restrictTo = (...role: string[]) => {
+  return (req: Request & UserInRequest, res: Response, next: NextFunction) => {
+    if (!role.includes(req?.user?.role || "nothing"))
+      return next(
+        new AppError("You don't have permission to perform this action", 403)
+      );
+
+    next();
+  };
+};

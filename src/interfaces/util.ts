@@ -1,7 +1,8 @@
 import { ObjectId } from "mongoose";
+import IUser from "./userInterface";
 
 export interface UserInRequest {
-  user?: Object;
+  user?: IUser;
 }
 
 export interface JWTReturn {
