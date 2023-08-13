@@ -44,10 +44,30 @@ export const login = catchAsync(
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.isCorrectPassword(password, user.password)))
-      return next(new AppError("Please Provide write email or password", 400));
+      return next(new AppError("Please Provide write email or password", 401));
 
     const token = signToken(user._id);
 
     res.status(200).send({ status: "success", token });
+  }
+);
+
+export const protect = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    let token;
+
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer ")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token)
+      return next(
+        new AppError("You are not logged in please login for get access ", 401)
+      );
+
+    next();
   }
 );
