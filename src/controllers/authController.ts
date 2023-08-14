@@ -6,7 +6,6 @@ import AppError from "../utils/appError";
 import { Types } from "mongoose";
 import { promisify } from "util";
 import { JWTReturn, UserInRequest } from "../interfaces/util";
-import IUser from "../interfaces/userInterface";
 
 const signToken = (id: Types.ObjectId) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -113,3 +112,16 @@ export const restrictTo = (...role: string[]) => {
     next();
   };
 };
+
+export const forgotPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user)
+      return next(new AppError("There is no user with this emailID", 404));
+
+    const resetToken = user.createPasswordResetToken();
+
+    // here i am save because createPasswordResetToken there i want to store token and expires date
+    await user.save({ validateBeforeSave: false });
+  }
+);

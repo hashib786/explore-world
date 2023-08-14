@@ -9,11 +9,14 @@ interface IUser {
   updatedAt: Date;
   passwordChangeAt: Date;
   role: string;
+  passwordResetToken: string;
+  passwordResetExpires: Date;
   isCorrectPassword(
     candidatePassword: string,
     hashUserPassword: string
   ): Promise<boolean>;
   isPasswordChanged(JWTTimestamp: number): boolean;
+  createPasswordResetToken(): String;
 }
 
 export default IUser;

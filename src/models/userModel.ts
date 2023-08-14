@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import IUser from "../interfaces/userInterface";
+import crypto from "node:crypto";
 
 // Create a Mongoose schema for the user
 const userSchema = new Schema<IUser>(
@@ -42,6 +43,8 @@ const userSchema = new Schema<IUser>(
       },
     },
     passwordChangeAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   },
   {
     timestamps: true,
@@ -75,6 +78,23 @@ userSchema.methods.isPasswordChanged = function (JWTTimestamp: number) {
   }
 
   return false;
+};
+
+userSchema.methods.createPasswordResetToken = function (): String {
+  // this is simple reset token for sending email
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  // This is encrypted reset token which one is stored in the database
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  console.log({ resetToken }, this.passwordResetToken);
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 // Create and export the User model
