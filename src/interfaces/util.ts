@@ -5,6 +5,10 @@ export interface UserInRequest {
   user?: IUser;
 }
 
+export interface UserInRequestConfirm {
+  user: IUser;
+}
+
 export interface JWTReturn {
   id: ObjectId;
   iat: number;
