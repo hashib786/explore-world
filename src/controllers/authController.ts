@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import crypto from "crypto";
 import catchAsync from "../utils/cathAsync";
 import User from "../models/userModel";
 import jwt, { GetPublicKeyOrSecret, Secret } from "jsonwebtoken";
@@ -173,5 +174,28 @@ export const forgotPassword = catchAsync(
 );
 
 export const resetPassword = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {}
+  async (req: Request, res: Response, next: NextFunction) => {
+    // Get user based on the token
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(req.params.token)
+      .digest("hex");
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+
+    // if token has not expired then set the new password
+    if (!user) return next(new AppError("Token is invalid or expired", 400));
+
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    const token = signToken(user._id);
+
+    res.status(200).send({ status: "success", token });
+  }
 );
