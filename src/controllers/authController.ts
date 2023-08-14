@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { CookieOptions, NextFunction, Request, Response } from "express";
 import crypto from "crypto";
 import catchAsync from "../utils/cathAsync";
 import User from "../models/userModel";
@@ -18,6 +18,19 @@ const signToken = (id: Types.ObjectId) => {
 
 const createSendToken = (user: IUser, status: number, res: Response) => {
   const token = signToken(user._id);
+
+  const cookieOption: CookieOptions = {
+    expires: new Date(
+      Date.now() +
+        parseInt(process.env.JWT_COOKIE_EXPIRES_IN!) * (24 * 60 * 60 * 1000)
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === "production") cookieOption.secure = true;
+
+  res.cookie("jwt", token, cookieOption);
+  user.password = "";
 
   res.status(201).json({
     status: "success",
