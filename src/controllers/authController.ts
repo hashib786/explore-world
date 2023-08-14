@@ -8,6 +8,7 @@ import { Types } from "mongoose";
 import { promisify } from "util";
 import { JWTReturn, UserInRequest } from "../interfaces/util";
 import sendMail from "../utils/email";
+import IUser from "../interfaces/userInterface";
 
 const signToken = (id: Types.ObjectId) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -196,6 +197,31 @@ export const resetPassword = catchAsync(
 
     const token = signToken(user._id);
 
+    res.status(200).send({ status: "success", token });
+  }
+);
+
+export const updatePassword = catchAsync(
+  async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
+    // 1. Get User from collection
+    const user = await User.findById(req?.user?._id).select("+password");
+    if (!user) return next(new AppError("You cannot perform this action", 403));
+
+    // 2. check if posted old password is currect
+    const isCorrect = await user.isCorrectPassword(
+      req.body.oldPassword,
+      user.password
+    );
+    if (!isCorrect)
+      return next(new AppError("Please provide write old password", 403));
+
+    // 3. if yes then update password
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+    await user.save();
+
+    // 4. login user and send jwt
+    const token = signToken(user._id);
     res.status(200).send({ status: "success", token });
   }
 );

@@ -1,5 +1,8 @@
+import { Types } from "mongoose";
+
 // Define an interface for the user document
 interface IUser {
+  _id: Types.ObjectId;
   name: string;
   email: string;
   photo?: string;

@@ -75,7 +75,7 @@ userSchema.methods.isCorrectPassword = async function (
   candidatePassword: string,
   hashUserPassword: string
 ): Promise<Boolean> {
-  return bcrypt.compare(candidatePassword, hashUserPassword);
+  return await bcrypt.compare(candidatePassword, hashUserPassword);
 };
 
 userSchema.methods.isPasswordChanged = function (JWTTimestamp: number) {
