@@ -16,6 +16,18 @@ const signToken = (id: Types.ObjectId) => {
   });
 };
 
+const createSendToken = (user: IUser, status: number, res: Response) => {
+  const token = signToken(user._id);
+
+  res.status(201).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 export const signUp = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const newUser = await User.create({
@@ -28,15 +40,7 @@ export const signUp = catchAsync(
       role: req.body.role,
     });
 
-    const token = signToken(newUser._id);
-
-    res.status(201).json({
-      status: "success",
-      token,
-      data: {
-        newUser,
-      },
-    });
+    createSendToken(newUser, 201, res);
   }
 );
 
@@ -53,9 +57,7 @@ export const login = catchAsync(
     if (!user || !(await user.isCorrectPassword(password, user.password)))
       return next(new AppError("Please Provide write email or password", 401));
 
-    const token = signToken(user._id);
-
-    res.status(200).send({ status: "success", token });
+    createSendToken(user, 200, res);
   }
 );
 
@@ -78,10 +80,6 @@ export const protect = catchAsync(
     const verifyJwt = promisify<string, Secret | GetPublicKeyOrSecret>(
       jwt.verify
     );
-
-    // jwt.verify(token, process.env.JWT_SECRET!,"dfdfds", function (err, decode : JWTReturn){
-
-    // })
 
     const decode: JWTReturn = (await verifyJwt(
       token,
@@ -195,9 +193,7 @@ export const resetPassword = catchAsync(
     user.passwordResetExpires = undefined;
     await user.save();
 
-    const token = signToken(user._id);
-
-    res.status(200).send({ status: "success", token });
+    createSendToken(user, 200, res);
   }
 );
 
@@ -221,7 +217,6 @@ export const updatePassword = catchAsync(
     await user.save();
 
     // 4. login user and send jwt
-    const token = signToken(user._id);
-    res.status(200).send({ status: "success", token });
+    createSendToken(user, 200, res);
   }
 );

@@ -22,7 +22,7 @@ router.post("/login", login);
 
 router.post("/forgotpassword", forgotPassword);
 router.patch("/resetpassword/:token", resetPassword);
-router.patch("/updatepassword", protect, updatePassword);
+router.patch("/updatemypassword", protect, updatePassword);
 
 router.route("/").get(getAllUser).post(createUser);
 router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
