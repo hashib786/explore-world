@@ -7,7 +7,7 @@ interface IUser {
   confirmPassword?: string;
   createdAt: Date;
   updatedAt: Date;
-  passwordChangeAt: Date;
+  passwordChangeAt: Date | Number;
   role: string;
   passwordResetToken: string | undefined;
   passwordResetExpires: Date | undefined;

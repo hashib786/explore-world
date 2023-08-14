@@ -60,6 +60,15 @@ userSchema.pre("save", async function (next) {
 
   next();
 });
+// when password update so update passwordchangeAt field
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  this.passwordChangeAt = Date.now() - 1000;
+  this.confirmPassword = undefined;
+
+  next();
+});
 
 // here this points to current document
 userSchema.methods.isCorrectPassword = async function (
