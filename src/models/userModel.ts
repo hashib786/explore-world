@@ -45,6 +45,10 @@ const userSchema = new Schema<IUser>(
     passwordChangeAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
@@ -66,9 +70,19 @@ userSchema.pre("save", async function (next) {
 
   this.passwordChangeAt = Date.now() - 1000;
   this.confirmPassword = undefined;
+  this;
 
   next();
 });
+
+userSchema.pre(
+  /^find/,
+  function (this: mongoose.Query<any, any, {}, any, "find">, next) {
+    this.find({ active: { $ne: false } });
+
+    next();
+  }
+);
 
 // here this points to current document
 userSchema.methods.isCorrectPassword = async function (

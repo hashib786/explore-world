@@ -14,6 +14,7 @@ interface IUser {
   role: string;
   passwordResetToken: string | undefined;
   passwordResetExpires: Date | undefined;
+  active: boolean;
   isCorrectPassword(
     candidatePassword: string,
     hashUserPassword: string

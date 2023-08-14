@@ -13,6 +13,15 @@ const filterObj = (obj: any, ...allowedField: string[]) => {
   return filterObject;
 };
 
+export const deleteMe = catchAsync(
+  async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
+    if (!req.user) return next(new AppError("User is not logged in", 403));
+    await User.findByIdAndUpdate(req.user._id, { active: false });
+
+    res.status(204).json({ status: "success", data: null });
+  }
+);
+
 export const updateMe = catchAsync(
   async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
     if (!req.user) return next(new AppError("You are not logged in", 403));
@@ -37,10 +46,9 @@ export const updateMe = catchAsync(
   }
 );
 
-export const getAllUser = (req: Request, res: Response) => {
-  res
-    .status(500)
-    .json({ status: "error", message: "This route is not defined." });
+export const getAllUser = async (req: Request, res: Response) => {
+  const users = await User.find();
+  res.status(500).json({ status: "success", data: { users } });
 };
 export const createUser = (req: Request, res: Response) => {
   res
