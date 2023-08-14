@@ -6,6 +6,7 @@ import AppError from "../utils/appError";
 import { Types } from "mongoose";
 import { promisify } from "util";
 import { JWTReturn, UserInRequest } from "../interfaces/util";
+import sendMail from "../utils/email";
 
 const signToken = (id: Types.ObjectId) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -122,6 +123,55 @@ export const forgotPassword = catchAsync(
     const resetToken = user.createPasswordResetToken();
 
     // here i am save because createPasswordResetToken there i want to store token and expires date
+    // here i also written validateBeforeSave: false because in saving time i only save some information not password and many thing like that so if i don't write thing then i got error
     await user.save({ validateBeforeSave: false });
+
+    // create reset Url
+    const resetUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/users/resetpassword/${resetToken}`;
+    const message = "Reset Your password";
+    const html = `
+              <style>
+                .reset-link {
+                  display: inline-block;
+                  padding: 10px 20px;
+                  background-color: #007bff;
+                  color: #fff;
+                  text-decoration: none;
+                  border-radius: 5px;
+                }
+              </style>
+              <p>Hello ${user.name},</p>
+              <p>You requested a password reset. Click the link below to reset your password:</p>
+              <a class="reset-link" href="${resetUrl}">Reset Password</a>
+              <p>If you didn't request this reset, you can ignore this email.</p>
+  `;
+
+    try {
+      await sendMail({
+        email: user.email,
+        subject: message,
+        message,
+        html,
+      });
+
+      res.status(200).json({
+        status: "success",
+        message: "Token send on you email",
+      });
+    } catch (error) {
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      return next(
+        new AppError("Error when sending email! Please try again later.", 500)
+      );
+    }
   }
+);
+
+export const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {}
 );

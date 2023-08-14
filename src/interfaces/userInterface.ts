@@ -9,8 +9,8 @@ interface IUser {
   updatedAt: Date;
   passwordChangeAt: Date;
   role: string;
-  passwordResetToken: string;
-  passwordResetExpires: Date;
+  passwordResetToken: string | undefined;
+  passwordResetExpires: Date | undefined;
   isCorrectPassword(
     candidatePassword: string,
     hashUserPassword: string

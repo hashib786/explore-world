@@ -10,3 +10,10 @@ export interface JWTReturn {
   iat: number;
   exp: number;
 }
+
+export interface mailOptions {
+  email: string;
+  subject: string;
+  message: string;
+  html?: string;
+}
