@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+import rateLimit from "express-rate-limit";
 
 import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
@@ -9,6 +10,15 @@ import errorController from "./controllers/errorController";
 import unhandledRoute from "./controllers/404route";
 
 const app = express();
+
+// This is for how many requests one IP address can request
+const limiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 100,
+  message: "Too many requests from the IP, please try again in one hour",
+});
+
+app.use("/api", limiter);
 
 // Middlware
 app.use(express.json());
