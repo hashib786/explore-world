@@ -6,6 +6,7 @@ import mongoSantize from "express-mongo-sanitize";
 
 import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
+import reviewRouter from "./routes/reviewRoutes";
 import { currentWorkingDirectory } from "./utils/utility";
 import { join } from "path";
 import errorController from "./controllers/errorController";
@@ -37,9 +38,10 @@ process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 // Middleware to serve static files from the "public" directory
 app.use(express.static(join(currentWorkingDirectory, "public")));
 
-// Routes for tours and users
+// Routes for tours , users, reviews
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 // Unhandled Routes
 app.all("*", unhandledRoute);
