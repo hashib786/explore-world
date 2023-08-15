@@ -125,6 +125,12 @@ TourSchema.virtual("durationWeeks").get(function () {
   return null;
 });
 
+TourSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
+});
+
 /* **** middleware in Mongoose: ****
 
   **** Document middleware
