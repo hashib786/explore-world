@@ -5,10 +5,13 @@ import { UserInRequest } from "../interfaces/util";
 
 export const getAllReview = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const reviews = await Review.find();
+    let filter = {};
+    if (req.params.tourId) filter = { tour: req.params.tourId };
+    const reviews = await Review.find(filter);
 
     res.status(200).json({
       status: "success",
+      result: reviews.length,
       data: { reviews },
     });
   }
