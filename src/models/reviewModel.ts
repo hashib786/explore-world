@@ -30,5 +30,20 @@ const reviewSchema = new mongoose.Schema<IReview>(
   }
 );
 
+reviewSchema.pre(
+  /^find/,
+  async function (this: mongoose.Query<any, any, {}, any, "find">, next) {
+    this.populate({
+      path: "tour",
+      select: "name",
+    }).populate({
+      path: "user",
+      select: "name photo",
+    });
+
+    next();
+  }
+);
+
 const Review = mongoose.model<IReview>("Review", reviewSchema);
 export default Review;
