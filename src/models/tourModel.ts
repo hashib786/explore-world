@@ -1,6 +1,8 @@
 import mongoose, { Types } from "mongoose";
 import slugify from "slugify";
 import ITour from "../interfaces/tourInterface";
+import IUser from "../interfaces/userInterface";
+import User from "./userModel";
 
 // All validation related things is written in validator section in mongoose
 const TourSchema = new mongoose.Schema<ITour>(
@@ -101,6 +103,7 @@ const TourSchema = new mongoose.Schema<ITour>(
         day: Number,
       },
     ],
+    // guides: Array,
   },
   {
     timestamps: true, // Add timestamps option here
@@ -156,6 +159,16 @@ TourSchema.pre("save", function (next) {
   if (this.name) this.slug = slugify(this.name, { lower: true });
   next();
 });
+
+// TourSchema.pre("save", async function (next) {
+//   const userPromises = this.guides?.map(
+//     async (id: any) => await User.findById(id)
+//   );
+//   const ArrayWala = await Promise.all(userPromises);
+//   console.log(ArrayWala);
+
+//   next();
+// });
 
 // i created this function because i want to excute this conde in two time for find and find one also
 function myMiddleware(
