@@ -10,6 +10,7 @@ import {
   updateTour,
 } from "../controllers/tourController";
 import { protect, restrictTo } from "../controllers/authController";
+import { createReview } from "../controllers/reviewController";
 
 const router = express.Router();
 
@@ -24,5 +25,9 @@ router
   .get(getTour)
   .patch(updateTour)
   .delete(protect, restrictTo("lead-guide", "admin"), deleteTour);
+
+router
+  .route("/:tourId/reviews")
+  .post(protect, restrictTo("user"), createReview);
 
 export default router;
