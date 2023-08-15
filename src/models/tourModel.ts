@@ -1,8 +1,6 @@
 import mongoose, { Types } from "mongoose";
 import slugify from "slugify";
 import ITour from "../interfaces/tourInterface";
-import IUser from "../interfaces/userInterface";
-import User from "./userModel";
 
 // All validation related things is written in validator section in mongoose
 const TourSchema = new mongoose.Schema<ITour>(
@@ -103,7 +101,12 @@ const TourSchema = new mongoose.Schema<ITour>(
         day: Number,
       },
     ],
-    // guides: Array,
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true, // Add timestamps option here

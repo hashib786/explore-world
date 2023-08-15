@@ -1,5 +1,4 @@
-import { Types } from "mongoose";
-import IUser from "./userInterface";
+import mongoose, { Types } from "mongoose";
 
 type StartLocation = {
   type: string;
@@ -33,7 +32,7 @@ interface ITour {
   updatedAt: Date;
   startLocation: StartLocation;
   locations: (StartLocation & Day)[];
-  guides: IUser[] | Types.ObjectId[] | null[];
+  guides: Types.ObjectId[];
 }
 
 export default ITour;
