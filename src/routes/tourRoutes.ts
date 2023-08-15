@@ -11,6 +11,7 @@ import {
 } from "../controllers/tourController";
 import { protect, restrictTo } from "../controllers/authController";
 import { createReview } from "../controllers/reviewController";
+import reviewRoutes from "./reviewRoutes";
 
 const router = express.Router();
 
@@ -26,8 +27,11 @@ router
   .patch(updateTour)
   .delete(protect, restrictTo("lead-guide", "admin"), deleteTour);
 
-router
-  .route("/:tourId/reviews")
-  .post(protect, restrictTo("user"), createReview);
+// here written this things so avoid repeated code
+router.use("/:tourId/reviews", reviewRoutes);
+
+// router
+//   .route("/:tourId/reviews")
+//   .post(protect, restrictTo("user"), createReview);
 
 export default router;
