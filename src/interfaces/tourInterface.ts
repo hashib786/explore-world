@@ -1,3 +1,17 @@
+import { Types } from "mongoose";
+
+type StartLocation = {
+  type: string;
+  coordinates: number[];
+  address: string;
+  description: string;
+};
+
+type Day = {
+  _id: Types.ObjectId;
+  day: number;
+};
+
 interface ITour {
   name: string;
   slug: string;
@@ -16,6 +30,8 @@ interface ITour {
   secretTour: boolean;
   createdAt: Date;
   updatedAt: Date;
+  startLocation: StartLocation;
+  locations: (StartLocation & Day)[];
 }
 
 export default ITour;
