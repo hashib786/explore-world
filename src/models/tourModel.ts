@@ -189,6 +189,17 @@ TourSchema.pre("findOne", function (next) {
   myMiddleware.call(this, next);
 });
 
+TourSchema.pre(
+  /^find/,
+  function (this: mongoose.Query<any, any, {}, any, "find">, next) {
+    this.find().populate({
+      path: "guides",
+      select: "-__v -passwordChangeAt -createdAt -updatedAt",
+    });
+    next();
+  }
+);
+
 // post middleware after all queries executed so i can't excute extra queries
 TourSchema.post("find", function (val, next) {
   // console.log(val);
