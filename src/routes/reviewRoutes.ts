@@ -3,6 +3,7 @@ import {
   createReview,
   deleteReview,
   getAllReview,
+  setBody,
   updateReview,
 } from "../controllers/reviewController";
 import { protect, restrictTo } from "../controllers/authController";
@@ -13,7 +14,7 @@ const router = Router({ mergeParams: true });
 router
   .route("/")
   .get(getAllReview)
-  .post(protect, restrictTo("user"), createReview);
+  .post(protect, restrictTo("user"), setBody, createReview);
 
 router.route("/:id").delete(deleteReview).patch(updateReview);
 

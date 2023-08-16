@@ -55,3 +55,15 @@ export const updateOne = <T>(Model: BaseModel<T>) =>
       },
     });
   });
+
+export const createOne = <T>(Model: BaseModel<T>) =>
+  catchAsync(async (req: Request, res: Response) => {
+    const data = await Model.create(req.body);
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        data,
+      },
+    });
+  });

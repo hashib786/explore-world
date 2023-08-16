@@ -5,7 +5,7 @@ import APIfeature from "../utils/APIfeature";
 import catchAsync from "../utils/cathAsync";
 import AppError from "../utils/appError";
 import { UserInRequest } from "../interfaces/util";
-import { deleteOne, updateOne } from "./handlerFactory";
+import { createOne, deleteOne, updateOne } from "./handlerFactory";
 
 export const aliasTopTour = (
   req: Request,
@@ -56,17 +56,7 @@ export const getTour = catchAsync(
   }
 );
 
-export const createTour = catchAsync(async (req: Request, res: Response) => {
-  const newTour = await Tour.create(req.body);
-
-  res.status(201).json({
-    status: "success",
-    data: {
-      newTour,
-    },
-  });
-});
-
+export const createTour = createOne(Tour);
 export const updateTour = updateOne(Tour);
 export const deleteTour = deleteOne(Tour);
 
