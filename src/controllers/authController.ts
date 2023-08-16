@@ -101,7 +101,7 @@ export const protect = catchAsync(
 
     const currentUser = await User.findById(decode.id);
     if (!currentUser)
-      return new AppError("User blogging token is no longer exist", 401);
+      return next(new AppError("User blogging token is no longer exist", 401));
 
     const isPasswordChanged = currentUser.isPasswordChanged(decode.iat);
 
