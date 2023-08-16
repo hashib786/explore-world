@@ -5,6 +5,7 @@ import APIfeature from "../utils/APIfeature";
 import catchAsync from "../utils/cathAsync";
 import AppError from "../utils/appError";
 import { UserInRequest } from "../interfaces/util";
+import { deleteOne } from "./handlerFactory";
 
 export const aliasTopTour = (
   req: Request,
@@ -86,20 +87,7 @@ export const updateTour = catchAsync(
   }
 );
 
-export const deleteTour = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const tour = await Tour.findByIdAndDelete(id);
-
-    if (!tour)
-      return next(new AppError("No tour found with that id : " + id, 404));
-
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
-  }
-);
+export const deleteTour = deleteOne(Tour);
 
 export const getTourStats = catchAsync(async (req: Request, res: Response) => {
   const stats = await Tour.aggregate([
