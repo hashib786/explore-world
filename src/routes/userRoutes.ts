@@ -4,6 +4,7 @@ import {
   deleteMe,
   deleteUser,
   getAllUser,
+  getMe,
   getUser,
   updateMe,
   updateUser,
@@ -27,6 +28,7 @@ router.patch("/resetpassword/:token", resetPassword);
 router.patch("/updatemypassword", protect, updatePassword);
 router.patch("/updateme", protect, updateMe);
 router.delete("/deleteme", protect, deleteMe);
+router.get("/me", protect, getMe, getUser);
 
 router.route("/").get(getAllUser).post(createUser);
 router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);

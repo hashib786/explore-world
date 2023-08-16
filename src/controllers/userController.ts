@@ -53,8 +53,18 @@ export const updateMe = catchAsync(
   }
 );
 
-export const getAllUser = getAll(User);
+export const getMe = async (
+  req: Request & UserInRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.user) return next(new AppError("You are not logged in", 403));
+  req.params.id = req.user._id.toString();
+  next();
+};
+
 export const getUser = getOne(User);
+export const getAllUser = getAll(User);
 export const createUser = createOne(User);
 export const updateUser = updateOne(User);
 export const deleteUser = deleteOne(User);
