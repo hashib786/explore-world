@@ -5,7 +5,7 @@ import APIfeature from "../utils/APIfeature";
 import catchAsync from "../utils/cathAsync";
 import AppError from "../utils/appError";
 import { UserInRequest } from "../interfaces/util";
-import { createOne, deleteOne, updateOne } from "./handlerFactory";
+import { createOne, deleteOne, getOne, updateOne } from "./handlerFactory";
 
 export const aliasTopTour = (
   req: Request,
@@ -38,24 +38,7 @@ export const getAllTour = catchAsync(
   }
 );
 
-export const getTour = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const tour = await Tour.findById(id).populate("reviews");
-
-    if (!tour) {
-      return next(new AppError("No tour found with that id : " + id, 404));
-    }
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        tour,
-      },
-    });
-  }
-);
-
+export const getTour = getOne(Tour, { path: "reviews" });
 export const createTour = createOne(Tour);
 export const updateTour = updateOne(Tour);
 export const deleteTour = deleteOne(Tour);

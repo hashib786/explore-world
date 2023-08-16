@@ -3,6 +3,7 @@ import {
   createReview,
   deleteReview,
   getAllReview,
+  getReview,
   setBody,
   updateReview,
 } from "../controllers/reviewController";
@@ -16,6 +17,6 @@ router
   .get(getAllReview)
   .post(protect, restrictTo("user"), setBody, createReview);
 
-router.route("/:id").delete(deleteReview).patch(updateReview);
+router.route("/:id").delete(deleteReview).patch(updateReview).get(getReview);
 
 export default router;

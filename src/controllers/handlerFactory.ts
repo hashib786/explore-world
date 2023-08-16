@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import mongoose, { Model, Document, Types } from "mongoose";
 import catchAsync from "../utils/cathAsync";
 import AppError from "../utils/appError";
+import { PopulateOptions } from "mongoose";
 
 interface IBaseDocument extends Document {
   _id: Types.ObjectId;
@@ -64,6 +65,29 @@ export const createOne = <T>(Model: BaseModel<T>) =>
       status: "success",
       data: {
         data,
+      },
+    });
+  });
+
+export const getOne = <T>(
+  Model: BaseModel<T>,
+  populateOption?: PopulateOptions
+) =>
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    let query = Model.findById(id);
+    if (populateOption) query.populate(populateOption);
+
+    const doc = await query;
+
+    if (!doc) {
+      return next(new AppError("No documents found with that id : " + id, 404));
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        data: doc,
       },
     });
   });
