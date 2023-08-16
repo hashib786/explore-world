@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import catchAsync from "../utils/cathAsync";
 import Review from "../models/reviewModel";
 import { UserInRequest } from "../interfaces/util";
+import { deleteOne } from "./handlerFactory";
 
 export const getAllReview = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -31,3 +32,5 @@ export const createReview = catchAsync(
     });
   }
 );
+
+export const deleteReview = deleteOne(Review);

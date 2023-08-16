@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { createReview, getAllReview } from "../controllers/reviewController";
+import {
+  createReview,
+  deleteReview,
+  getAllReview,
+} from "../controllers/reviewController";
 import { protect, restrictTo } from "../controllers/authController";
 
 // this is for doing when tour dynamic route call so it transfer here and merge that
@@ -9,5 +13,7 @@ router
   .route("/")
   .get(getAllReview)
   .post(protect, restrictTo("user"), createReview);
+
+router.route("/:id").delete(deleteReview);
 
 export default router;

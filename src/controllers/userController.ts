@@ -3,6 +3,7 @@ import catchAsync from "../utils/cathAsync";
 import AppError from "../utils/appError";
 import User from "../models/userModel";
 import { UserInRequest } from "../interfaces/util";
+import { deleteOne } from "./handlerFactory";
 
 const filterObj = (obj: any, ...allowedField: string[]) => {
   const filterObject: any = {};
@@ -65,8 +66,4 @@ export const updateUser = (req: Request, res: Response) => {
     .status(500)
     .json({ status: "error", message: "This route is not defined." });
 };
-export const deleteUser = (req: Request, res: Response) => {
-  res
-    .status(500)
-    .json({ status: "error", message: "This route is not defined." });
-};
+export const deleteUser = deleteOne(User);
