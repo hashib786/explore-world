@@ -10,7 +10,6 @@ import {
   updateTour,
 } from "../controllers/tourController";
 import { protect, restrictTo } from "../controllers/authController";
-import { createReview } from "../controllers/reviewController";
 import reviewRoutes from "./reviewRoutes";
 
 const router = express.Router();

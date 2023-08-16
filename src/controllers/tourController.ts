@@ -1,11 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 
 import Tour from "../models/tourModel";
-import APIfeature from "../utils/APIfeature";
 import catchAsync from "../utils/cathAsync";
-import AppError from "../utils/appError";
-import { UserInRequest } from "../interfaces/util";
-import { createOne, deleteOne, getOne, updateOne } from "./handlerFactory";
+import {
+  createOne,
+  deleteOne,
+  getAll,
+  getOne,
+  updateOne,
+} from "./handlerFactory";
 
 export const aliasTopTour = (
   req: Request,
@@ -18,26 +21,7 @@ export const aliasTopTour = (
   next();
 };
 
-export const getAllTour = catchAsync(
-  async (req: Request & UserInRequest, res: Response) => {
-    const feature = new APIfeature(Tour.find(), req.query)
-      .filter()
-      .sort()
-      .feilds()
-      .pagination();
-
-    // Excute the query
-    const tours = await feature.query;
-    res.status(200).json({
-      status: "success",
-      result: tours.length,
-      data: {
-        tours,
-      },
-    });
-  }
-);
-
+export const getAllTour = getAll(Tour);
 export const getTour = getOne(Tour, { path: "reviews" });
 export const createTour = createOne(Tour);
 export const updateTour = updateOne(Tour);

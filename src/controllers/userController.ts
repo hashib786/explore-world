@@ -3,7 +3,13 @@ import catchAsync from "../utils/cathAsync";
 import AppError from "../utils/appError";
 import User from "../models/userModel";
 import { UserInRequest } from "../interfaces/util";
-import { createOne, deleteOne, getOne, updateOne } from "./handlerFactory";
+import {
+  createOne,
+  deleteOne,
+  getAll,
+  getOne,
+  updateOne,
+} from "./handlerFactory";
 
 const filterObj = (obj: any, ...allowedField: string[]) => {
   const filterObject: any = {};
@@ -47,10 +53,7 @@ export const updateMe = catchAsync(
   }
 );
 
-export const getAllUser = async (req: Request, res: Response) => {
-  const users = await User.find();
-  res.status(500).json({ status: "success", data: { users } });
-};
+export const getAllUser = getAll(User);
 export const getUser = getOne(User);
 export const createUser = createOne(User);
 export const updateUser = updateOne(User);
