@@ -14,7 +14,11 @@ export default class APIfeature<
     // Advance query Replace Directly in query
     // localhost:3000/api/v1/tours?price[lte]=500 writing query like that replace to localhost:3000/api/v1/tours?price[$lte]=500
     // const queryOpra = ["lt", "lte", "gt", "gte"];
-    this.query.find(queryObject);
+
+    let queryStr = JSON.stringify(queryObject);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+    this.query.find(JSON.parse(queryStr));
 
     return this;
   }
