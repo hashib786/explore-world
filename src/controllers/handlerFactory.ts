@@ -105,7 +105,8 @@ export const getAll = <T>(Model: BaseModel<T>) => {
       .pagination();
 
     // Excute the query
-    const docs = await feature.query;
+    // const docs = await feature.query;
+    const docs = await feature.query.explain();
     res.status(200).json({
       status: "success",
       result: docs.length,
