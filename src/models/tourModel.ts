@@ -117,6 +117,7 @@ const TourSchema = new mongoose.Schema<ITour>(
 
 // TourSchema.index({ price: 1 });
 TourSchema.index({ price: 1, ratingsAverage: -1 });
+TourSchema.index({ slug: 1 });
 
 /*
   A virtual property in Mongoose is a calculated field that doesn't store data in the database. It's defined on a schema, and your provided code example computes a virtual property called durationWeeks, which calculates the tour duration in weeks based on the existing duration field. This calculated value isn't stored but is available when you access tour.durationWeeks. 
