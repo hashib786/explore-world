@@ -1,7 +1,12 @@
-import mongoose from "mongoose";
+import mongoose, { Model, Types } from "mongoose";
 import { IReview } from "../interfaces/reviewInterface";
+import Tour from "./tourModel";
 
-const reviewSchema = new mongoose.Schema<IReview>(
+interface ReviewModel extends Model<IReview> {
+  calcAverageRating(tourId: Types.ObjectId): void;
+}
+
+const reviewSchema = new mongoose.Schema<IReview, ReviewModel>(
   {
     review: {
       type: String,
@@ -30,17 +35,31 @@ const reviewSchema = new mongoose.Schema<IReview>(
   }
 );
 
+// Here i created static function for that you need to create one interface and extend model in mongoose and defined in interface
+// this static funtion only run direct model
+reviewSchema.static("calcAverageRating", async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: "$tour",
+        nRating: { $sum: 1 },
+        avgRating: { $avg: "$rating" },
+      },
+    },
+  ]);
+
+  await Tour.findByIdAndUpdate(tourId, {
+    ratingsAverage: stats[0].avgRating,
+    ratingsQuantity: stats[0].nRating,
+  });
+});
+
 reviewSchema.pre(
   /^find/,
   async function (this: mongoose.Query<any, any, {}, any, "find">, next) {
-    // this.populate({
-    //   path: "tour",
-    //   select: "name",
-    // }).populate({
-    //   path: "user",
-    //   select: "name photo",
-    // });
-
     this.populate({
       path: "user",
       select: "name photo",
@@ -50,5 +69,22 @@ reviewSchema.pre(
   }
 );
 
-const Review = mongoose.model<IReview>("Review", reviewSchema);
+// here i am calling written post middleware because after saving i want to calculate avrage rating of tour (calcAverageRating)
+reviewSchema.post("save", function () {
+  // here i am not directly not calling calcAverageRating because this only access in model but this time model is not defined so i use hoisting funcion and explicitly defined this keyword
+  calculatingAvgRating.call(this);
+});
+
+const Review = mongoose.model<IReview, ReviewModel>("Review", reviewSchema);
+
+// this is for calculating avrage rating
+function calculatingAvgRating(
+  this: mongoose.Document<unknown, {}, IReview> &
+    IReview & {
+      _id: mongoose.Types.ObjectId;
+    }
+) {
+  Review.calcAverageRating(this.tour);
+}
+
 export default Review;
