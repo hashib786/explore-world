@@ -35,6 +35,9 @@ const reviewSchema = new mongoose.Schema<IReview, ReviewModel>(
   }
 );
 
+// I created this index because here one user only create one reveiw in one tour
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 // Here i created static function for that you need to create one interface and extend model in mongoose and defined in interface
 // this static funtion only run direct model
 reviewSchema.static("calcAverageRating", async function (tourId) {
@@ -87,7 +90,7 @@ reviewSchema.post(
     val: IReview,
     next
   ) {
-    calculatingAvgRating(val.tour);
+    if (val) calculatingAvgRating(val.tour);
     next();
   }
 );
