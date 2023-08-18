@@ -51,9 +51,11 @@ reviewSchema.static("calcAverageRating", async function (tourId) {
     },
   ]);
 
+  const statsTotal = stats.length;
+
   await Tour.findByIdAndUpdate(tourId, {
-    ratingsAverage: stats[0].avgRating,
-    ratingsQuantity: stats[0].nRating,
+    ratingsAverage: statsTotal ? stats[0].avgRating : 4.5,
+    ratingsQuantity: statsTotal ? stats[0].nRating : 0,
   });
 });
 
@@ -70,21 +72,31 @@ reviewSchema.pre(
 );
 
 // here i am calling written post middleware because after saving i want to calculate avrage rating of tour (calcAverageRating)
-reviewSchema.post("save", function () {
+reviewSchema.post("save", function (val, next) {
   // here i am not directly not calling calcAverageRating because this only access in model but this time model is not defined so i use hoisting funcion and explicitly defined this keyword
-  calculatingAvgRating.call(this);
+  calculatingAvgRating(this.tour);
+
+  next();
 });
+
+// here i am writting regular expressions in findOne not find because whenever populating review calling find and every time calculate average call
+reviewSchema.post(
+  /^findOne/,
+  function (
+    this: mongoose.Query<any, any, {}, any, "find">,
+    val: IReview,
+    next
+  ) {
+    calculatingAvgRating(val.tour);
+    next();
+  }
+);
 
 const Review = mongoose.model<IReview, ReviewModel>("Review", reviewSchema);
 
 // this is for calculating avrage rating
-function calculatingAvgRating(
-  this: mongoose.Document<unknown, {}, IReview> &
-    IReview & {
-      _id: mongoose.Types.ObjectId;
-    }
-) {
-  Review.calcAverageRating(this.tour);
+function calculatingAvgRating(tourId: Types.ObjectId) {
+  Review.calcAverageRating(tourId);
 }
 
 export default Review;
