@@ -12,8 +12,17 @@ export const getOverview = catchAsync(
   }
 );
 
-export const getTourView = (req: Request, res: Response) => {
-  res.status(200).render("tour", {
-    tittle: "The Forest Hiker Details",
-  });
-};
+export const getTourView = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { slug } = req.params;
+    const tour = await Tour.findOne({ slug }).populate({
+      path: "reviews",
+      select: "name photo",
+    });
+
+    res.status(200).render("tour", {
+      tittle: "The Forest Hiker Details",
+      tour,
+    });
+  }
+);
