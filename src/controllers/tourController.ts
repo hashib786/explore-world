@@ -9,6 +9,7 @@ import {
   getOne,
   updateOne,
 } from "./handlerFactory";
+import AppError from "../utils/appError";
 
 export const aliasTopTour = (
   req: Request,
@@ -116,5 +117,31 @@ export const getMonthlyPlan = catchAsync(
       status: "success",
       data: { plan },
     });
+  }
+);
+
+// /tour-within/:distance/center/:latlng/unit/:unit
+export const getTourWithin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { distance, latlng, unit } = req.params;
+    const [lat, lng] = latlng.split(",");
+
+    const radius = unit === "mi" ? +distance / 3963.2 : +distance / 6378.1;
+
+    if (!lat || !lng)
+      return next(
+        new AppError(
+          "please provide latitude and langitude in the format lat,lng.",
+          400
+        )
+      );
+
+    const tours = await Tour.find({
+      startLocation: {
+        $geoWithin: { $centerSphere: [[lng, lat], radius] },
+      },
+    });
+
+    res.status(200).json({ status: "success", results: tours.length, tours });
   }
 );

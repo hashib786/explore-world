@@ -7,6 +7,7 @@ import {
   getMonthlyPlan,
   getTour,
   getTourStats,
+  getTourWithin,
   updateTour,
 } from "../controllers/tourController";
 import { protect, restrictTo } from "../controllers/authController";
@@ -21,6 +22,10 @@ router
   .route("/monthly-plan/:year")
   .get(protect, restrictTo("lead-guide", "admin", "guide"), getMonthlyPlan);
 router.route("/top-5-tour").get(aliasTopTour, getAllTour);
+
+router
+  .route("/tour-within/:distance/center/:latlng/unit/:unit")
+  .get(getTourWithin);
 
 router
   .route("/")
