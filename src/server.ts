@@ -31,3 +31,7 @@ process.on("unhandledRejection", (err: Error) => {
     process.exit(1);
   });
 });
+
+/* ********** Api Documentation in Posman **********
+  URL --> https://documenter.getpostman.com/view/25861876/2s9Y5SW5wE
+*/
