@@ -43,7 +43,9 @@ app.use(mongoSantize());
 process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 
 app.get("/", (req, res) => {
-  res.status(200).render("base");
+  res.status(200).render("base", {
+    tour: "The Forest Hiker",
+  });
 });
 
 // Routes for tours , users, reviews
