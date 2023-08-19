@@ -6,14 +6,14 @@ html
     link(href='https://fonts.googleapis.com/css?family=Lato:300,300i,700' rel='stylesheet')
     link(rel='stylesheet' href='css/style.css')
     link(rel='shortcut icon' type='image/png' href='img/favicon.png')
-    title Natours | Exciting tours for adventurous people
+    title Natours | #{tittle ? tittle : "Exciting tours for adventurous people"}
   body
     // Header
     include _header
 
     // Section
-    section.overview
-      h1= tour
+    block content
+      h1 This is the placeholder
 
     // Footer
     include _footer

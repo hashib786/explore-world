@@ -48,6 +48,18 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/overview", (req, res) => {
+  res.status(200).render("overview", {
+    tittle: "This is overview Page",
+  });
+});
+
+app.get("/tour", (req, res) => {
+  res.status(200).render("tour", {
+    tittle: "The Forest Hiker Details",
+  });
+});
+
 // Routes for tours , users, reviews
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
