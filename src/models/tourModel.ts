@@ -220,10 +220,10 @@ TourSchema.post("find", function (val, next) {
 
 // *** Aggregation middleware ***
 // if i write this.pipeline() --> then i got whenever i write in aggregation pipeline in array so filter out anything you can push any thing in array i need to filter out something in there so i push in front side
-TourSchema.pre("aggregate", function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  next();
-});
+// TourSchema.pre("aggregate", function (next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   next();
+// });
 
 // This is post middleware it calling same like pre middleware you also get value
 TourSchema.post("save", function (val, next) {
