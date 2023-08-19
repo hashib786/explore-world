@@ -14,6 +14,13 @@ import unhandledRoute from "./controllers/404route";
 
 const app = express();
 
+app.set("view engine", "pug");
+app.set("views", join(currentWorkingDirectory, "views"));
+
+// Global Middleware
+// Middleware to serve static files from the "public" directory
+app.use(express.static(join(currentWorkingDirectory, "public")));
+
 // Apply helmet middleware for enhanced security
 app.use(helmet());
 
@@ -35,8 +42,9 @@ app.use(mongoSantize());
 // Middleware for logging requests in development mode
 process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 
-// Middleware to serve static files from the "public" directory
-app.use(express.static(join(currentWorkingDirectory, "public")));
+app.get("/", (req, res) => {
+  res.status(200).render("base");
+});
 
 // Routes for tours , users, reviews
 app.use("/api/v1/tours", tourRouter);
