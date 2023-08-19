@@ -7,6 +7,7 @@ import mongoSantize from "express-mongo-sanitize";
 import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
 import reviewRouter from "./routes/reviewRoutes";
+import viewRouter from "./routes/viewRoutes";
 import { currentWorkingDirectory } from "./utils/utility";
 import { join } from "path";
 import errorController from "./controllers/errorController";
@@ -42,25 +43,8 @@ app.use(mongoSantize());
 // Middleware for logging requests in development mode
 process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 
-app.get("/", (req, res) => {
-  res.status(200).render("base", {
-    tour: "The Forest Hiker",
-  });
-});
-
-app.get("/overview", (req, res) => {
-  res.status(200).render("overview", {
-    tittle: "This is overview Page",
-  });
-});
-
-app.get("/tour", (req, res) => {
-  res.status(200).render("tour", {
-    tittle: "The Forest Hiker Details",
-  });
-});
-
 // Routes for tours , users, reviews
+app.use("/", viewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
