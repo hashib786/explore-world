@@ -32,3 +32,9 @@ export const getTourView = catchAsync(
       });
   }
 );
+
+export const getLogin = (req: Request, res: Response) => {
+  res.status(200).render("login", {
+    tittle: "Login into your account",
+  });
+};
