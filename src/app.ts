@@ -1,8 +1,9 @@
-import express from "express";
+import express, { NextFunction, Request } from "express";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet"; // The helmet package for Node.js adds vital security-related HTTP headers to your application automatically, fortifying it against prevalent web vulnerabilities.
 import mongoSantize from "express-mongo-sanitize";
+import cookieParser from "cookie-parser";
 
 import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
@@ -35,6 +36,7 @@ app.use("/api", limiter);
 
 // Middleware for parsing JSON data and setting a size limit
 app.use(express.json({ limit: "10kb" }));
+app.use(cookieParser());
 
 // Data sanitization againts NoSql query injection
 app.use(mongoSantize());
@@ -42,6 +44,13 @@ app.use(mongoSantize());
 
 // Middleware for logging requests in development mode
 process.env.NODE_ENV === "development" && app.use(morgan("dev"));
+
+// Test Middleware
+app.use((req, res, next) => {
+  console.log(req.cookies);
+
+  next();
+});
 
 // Routes for tours , users, reviews
 app.use("/", viewRouter);
