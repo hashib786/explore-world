@@ -17,7 +17,7 @@ export const getTourView = catchAsync(
     const { slug } = req.params;
     const tour = await Tour.findOne({ slug }).populate({
       path: "reviews",
-      select: "name photo",
+      select: "name photo review rating",
     });
 
     res.status(200).render("tour", {
