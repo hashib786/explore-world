@@ -116,6 +116,33 @@ export const protect = catchAsync(
   }
 );
 
+// This is for only our pug for checking user is logged in or not in request
+export const isLoggedIn = catchAsync(
+  async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
+    if (req.cookies.jwt) {
+      const verifyJwt = promisify<string, Secret | GetPublicKeyOrSecret>(
+        jwt.verify
+      );
+
+      const decode: JWTReturn = (await verifyJwt(
+        req.cookies.jwt,
+        process.env.JWT_SECRET!
+      )) as unknown as JWTReturn;
+
+      const currentUser = await User.findById(decode.id);
+      if (!currentUser) return next();
+
+      const isPasswordChanged = currentUser.isPasswordChanged(decode.iat);
+
+      if (isPasswordChanged) return next();
+
+      res.locals.user = currentUser;
+    }
+
+    next();
+  }
+);
+
 export const restrictTo = (...role: string[]) => {
   return (req: Request & UserInRequest, res: Response, next: NextFunction) => {
     if (!role.includes(req?.user?.role || "nothing"))

@@ -4,12 +4,14 @@ import {
   getOverview,
   getTourView,
 } from "../controllers/viewController";
-import { protect } from "../controllers/authController";
+import { isLoggedIn } from "../controllers/authController";
 
 const router = Router();
 
+router.use(isLoggedIn);
+
 router.route("/").get(getOverview);
-router.route("/tour/:slug").get(protect, getTourView);
+router.route("/tour/:slug").get(getTourView);
 router.route("/login").get(getLogin);
 
 export default router;
