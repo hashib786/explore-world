@@ -190,7 +190,8 @@ function myMiddleware(
   this: mongoose.Query<any, any, {}, any, "find">,
   next: Function
 ) {
-  this.find({ secretTour: { $ne: true } }).select("-description");
+  // this.find({ secretTour: { $ne: true } }).select("-description");
+  this.find({ secretTour: { $ne: true } });
   next();
 }
 
