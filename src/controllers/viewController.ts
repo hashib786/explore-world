@@ -21,7 +21,7 @@ export const getTourView = catchAsync(
     });
 
     res.status(200).render("tour", {
-      tittle: "The Forest Hiker Details",
+      tittle: `${tour?.name} Tour`,
       tour,
     });
   }
