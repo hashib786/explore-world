@@ -34,7 +34,10 @@ export const getTourView = catchAsync(
 );
 
 export const getLogin = (req: Request, res: Response) => {
-  res.status(200).render("login", {
-    tittle: "Login into your account",
-  });
+  res
+    .status(200)
+    .set("Content-Security-Policy", "connect-src 'self' http://127.0.0.1:3000/")
+    .render("login", {
+      tittle: "Login into your account",
+    });
 };
