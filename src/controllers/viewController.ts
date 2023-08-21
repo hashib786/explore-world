@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Tour from "../models/tourModel";
 import catchAsync from "../utils/cathAsync";
+import AppError from "../utils/appError";
 
 export const getOverview = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -19,6 +20,9 @@ export const getTourView = catchAsync(
       path: "reviews",
       select: "name photo review rating",
     });
+
+    if (!tour)
+      return next(new AppError("There is no tour with that name", 404));
 
     res
       .status(200)
