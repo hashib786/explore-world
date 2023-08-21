@@ -16,6 +16,20 @@ const signToken = (id: Types.ObjectId) => {
   });
 };
 
+export const logOut = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  res.cookie("jwt", "", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(201).json({
+    status: "success",
+  });
+};
+
 const createSendToken = (user: IUser, status: number, res: Response) => {
   const token = signToken(user._id);
 

@@ -11,6 +11,7 @@ import {
 } from "../controllers/userController";
 import {
   forgotPassword,
+  logOut,
   login,
   protect,
   resetPassword,
@@ -23,6 +24,7 @@ const router = express.Router();
 
 router.post("/signup", signUp);
 router.post("/login", login);
+router.get("/logout", logOut);
 router.post("/forgotpassword", forgotPassword);
 router.patch("/resetpassword/:token", resetPassword);
 
