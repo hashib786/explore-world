@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Tour from "../models/tourModel";
 import catchAsync from "../utils/cathAsync";
 import AppError from "../utils/appError";
+import { UserInRequest } from "../interfaces/util";
 
 export const getOverview = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -43,5 +44,14 @@ export const getLogin = (req: Request, res: Response) => {
     .set("Content-Security-Policy", "connect-src 'self' http://127.0.0.1:3000/")
     .render("login", {
       tittle: "Login into your account",
+    });
+};
+
+export const getAccount = (req: Request & UserInRequest, res: Response) => {
+  res
+    .status(200)
+    .set("Content-Security-Policy", "connect-src 'self' http://127.0.0.1:3000/")
+    .render("account", {
+      tittle: `${req?.user?.name || "Your"} | Profile`,
     });
 };

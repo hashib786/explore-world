@@ -125,6 +125,7 @@ export const protect = catchAsync(
       );
 
     req.user = currentUser;
+    res.locals.user = currentUser;
 
     next();
   }
