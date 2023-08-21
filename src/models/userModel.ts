@@ -20,6 +20,7 @@ const userSchema = new Schema<IUser>(
     },
     photo: {
       type: String,
+      default: "default.jpg",
       // You can add validation for photo URL format if needed
     },
     password: {
