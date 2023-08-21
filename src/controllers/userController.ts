@@ -10,6 +10,7 @@ import {
   getOne,
   updateOne,
 } from "./handlerFactory";
+import multer, { FileFilterCallback } from "multer";
 
 const filterObj = (obj: any, ...allowedField: string[]) => {
   const filterObject: any = {};
@@ -19,6 +20,34 @@ const filterObj = (obj: any, ...allowedField: string[]) => {
   });
   return filterObject;
 };
+
+const multerStorage = multer.diskStorage({
+  destination(req, file, callback) {
+    callback(null, "public/img/users");
+  },
+  filename(req: Request & UserInRequest, file, callback) {
+    if (!req.user)
+      callback(new AppError("You are not logged in", 403), "nothing");
+    const extention = file.mimetype.split("/")[1];
+    callback(null, `user-${req?.user?._id}-${Date.now()}.${extention}`);
+  },
+});
+
+const multerFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  callback: FileFilterCallback
+) => {
+  if (file.mimetype.startsWith("image")) callback(null, true);
+  else callback(new AppError("Please upload only Image", 403));
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+export const uploadPhoto = upload.single("photo");
 
 export const deleteMe = catchAsync(
   async (req: Request & UserInRequest, res: Response, next: NextFunction) => {

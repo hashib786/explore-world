@@ -8,6 +8,7 @@ import {
   getUser,
   updateMe,
   updateUser,
+  uploadPhoto,
 } from "../controllers/userController";
 import {
   forgotPassword,
@@ -22,7 +23,7 @@ import {
 
 import multer from "multer";
 
-const upload = multer({ dest: "/public/img/users" });
+const upload = multer({ dest: "public/img/users" });
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.patch("/resetpassword/:token", resetPassword);
 
 router.use(protect);
 router.patch("/updatemypassword", updatePassword);
-router.patch("/updateme", upload.single("photo"), updateMe);
+router.patch("/updateme", uploadPhoto, updateMe);
 router.delete("/deleteme", deleteMe);
 router.get("/me", getMe, getUser);
 
