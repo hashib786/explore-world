@@ -1,20 +1,14 @@
 import axios from "axios";
 import { showAlert } from "./showAlert";
 
-export const updateData = async (e) => {
-  e.preventDefault();
+const selectDataReturnVal = (id) => document.getElementById(id).value;
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-
+const sendData = async (url, data) => {
   try {
     const res = await axios({
       method: "PATCH",
-      url: "http://localhost:3000/api/v1/users/updateme",
-      data: {
-        name,
-        email,
-      },
+      url,
+      data,
     });
     if (res.data.status === "success") {
       showAlert("success", "Update User Data Successfully");
@@ -25,4 +19,36 @@ export const updateData = async (e) => {
       location.reload(true);
     }, 5000);
   }
+};
+
+export const updateData = (e) => {
+  e.preventDefault();
+
+  const name = selectDataReturnVal("name");
+  const email = selectDataReturnVal("email");
+
+  sendData("http://localhost:3000/api/v1/users/updateme", { name, email });
+};
+
+export const updatePasswords = async (e) => {
+  e.preventDefault();
+
+  const oldPassword = selectDataReturnVal("password-current");
+  const password = selectDataReturnVal("password");
+  const confirmPassword = selectDataReturnVal("password-confirm");
+
+  const savingButton = document.querySelector(".btn--save-password");
+  savingButton.textContent = "Updating ...";
+
+  await sendData("http://localhost:3000/api/v1/users/updatemypassword", {
+    oldPassword,
+    password,
+    confirmPassword,
+  });
+
+  document.getElementById("password-current").textContent = "";
+  document.getElementById("password").textContent = "";
+  document.getElementById("password-confirm").textContent = "";
+
+  savingButton.textContent = "Save password";
 };
