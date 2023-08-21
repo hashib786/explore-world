@@ -3,6 +3,7 @@ import Tour from "../models/tourModel";
 import catchAsync from "../utils/cathAsync";
 import AppError from "../utils/appError";
 import { UserInRequest } from "../interfaces/util";
+import User from "../models/userModel";
 
 export const getOverview = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -55,3 +56,23 @@ export const getAccount = (req: Request & UserInRequest, res: Response) => {
       tittle: `${req?.user?.name || "Your"} | Profile`,
     });
 };
+
+export const updateUserBody = catchAsync(
+  async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
+    const updatedUser = await User.findByIdAndUpdate(
+      req?.user?._id,
+      {
+        name: req.body.name,
+        email: req.body.email,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    res.status(201).render("account", {
+      user: updatedUser,
+      title: `${updatedUser?.name || "Your name"} | Profile`,
+    });
+  }
+);

@@ -36,6 +36,7 @@ app.use("/api", limiter);
 
 // Middleware for parsing JSON data and setting a size limit
 app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Data sanitization againts NoSql query injection
@@ -47,8 +48,6 @@ process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 
 // Test Middleware
 app.use((req, res, next) => {
-  // console.log(req.cookies);
-
   next();
 });
 
