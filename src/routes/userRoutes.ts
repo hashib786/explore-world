@@ -20,6 +20,10 @@ import {
   updatePassword,
 } from "../controllers/authController";
 
+import multer from "multer";
+
+const upload = multer({ dest: "/public/img/users" });
+
 const router = express.Router();
 
 router.post("/signup", signUp);
@@ -30,7 +34,7 @@ router.patch("/resetpassword/:token", resetPassword);
 
 router.use(protect);
 router.patch("/updatemypassword", updatePassword);
-router.patch("/updateme", updateMe);
+router.patch("/updateme", upload.single("photo"), updateMe);
 router.delete("/deleteme", deleteMe);
 router.get("/me", getMe, getUser);
 

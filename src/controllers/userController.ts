@@ -31,6 +31,8 @@ export const deleteMe = catchAsync(
 
 export const updateMe = catchAsync(
   async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
+    console.log(req.body);
+    console.log(req.file);
     if (!req.user) return next(new AppError("You are not logged in", 403));
     // 1. create error if user want to change password
     if (req.body.password || req.body.confirmPassword)
