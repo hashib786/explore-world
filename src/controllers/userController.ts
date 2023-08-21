@@ -11,6 +11,7 @@ import {
   updateOne,
 } from "./handlerFactory";
 import multer, { FileFilterCallback } from "multer";
+import sharp from "sharp";
 
 const filterObj = (obj: any, ...allowedField: string[]) => {
   const filterObject: any = {};
@@ -21,17 +22,20 @@ const filterObj = (obj: any, ...allowedField: string[]) => {
   return filterObject;
 };
 
-const multerStorage = multer.diskStorage({
-  destination(req, file, callback) {
-    callback(null, "public/img/users");
-  },
-  filename(req: Request & UserInRequest, file, callback) {
-    if (!req.user)
-      callback(new AppError("You are not logged in", 403), "nothing");
-    const extention = file.mimetype.split("/")[1];
-    callback(null, `user-${req?.user?._id}-${Date.now()}.${extention}`);
-  },
-});
+// const multerStorage = multer.diskStorage({
+//   destination(req, file, callback) {
+//     callback(null, "public/img/users");
+//   },
+//   filename(req: Request & UserInRequest, file, callback) {
+//     if (!req.user)
+//       callback(new AppError("You are not logged in", 403), "nothing");
+//     const extention = file.mimetype.split("/")[1];
+//     callback(null, `user-${req?.user?._id}-${Date.now()}.${extention}`);
+//   },
+// });
+
+//  saving image file in buffer so i cropt images
+const multerStorage = multer.memoryStorage();
 
 const multerFilter = (
   req: Request,
@@ -48,6 +52,23 @@ const upload = multer({
 });
 
 export const uploadPhoto = upload.single("photo");
+
+export const resizeUserPhoto = (
+  req: Request & UserInRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.file) return next();
+
+  req.file.filename = `user-${req?.user?._id}-${Date.now()}.jpeg`;
+  sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+
+  next();
+};
 
 export const deleteMe = catchAsync(
   async (req: Request & UserInRequest, res: Response, next: NextFunction) => {

@@ -6,6 +6,7 @@ import {
   getAllUser,
   getMe,
   getUser,
+  resizeUserPhoto,
   updateMe,
   updateUser,
   uploadPhoto,
@@ -35,7 +36,7 @@ router.patch("/resetpassword/:token", resetPassword);
 
 router.use(protect);
 router.patch("/updatemypassword", updatePassword);
-router.patch("/updateme", uploadPhoto, updateMe);
+router.patch("/updateme", uploadPhoto, resizeUserPhoto, updateMe);
 router.delete("/deleteme", deleteMe);
 router.get("/me", getMe, getUser);
 
