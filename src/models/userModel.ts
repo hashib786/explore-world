@@ -9,6 +9,7 @@ const userSchema = new Schema<IUser>(
     name: {
       type: String,
       required: [true, "Please provide a name"],
+      minlength: [3, "name must be at least 3 characters"],
     },
     email: {
       type: String,

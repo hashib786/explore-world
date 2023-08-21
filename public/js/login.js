@@ -29,7 +29,7 @@ export const logout = async () => {
       method: "GET",
       url: "http://localhost:3000/api/v1/users/logout",
     });
-    location.reload(true);
+    location.assign("/");
   } catch (error) {
     showAlert("error", "Logged out failed! Please try again");
   }
