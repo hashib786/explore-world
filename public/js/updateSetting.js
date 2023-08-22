@@ -3,7 +3,7 @@ import { showAlert } from "./showAlert";
 
 const selectDataReturnVal = (id) => document.getElementById(id).value;
 
-const sendData = async (url, data) => {
+const sendData = async (url, data, photo) => {
   try {
     const res = await axios({
       method: "PATCH",
@@ -12,6 +12,9 @@ const sendData = async (url, data) => {
     });
     if (res.data.status === "success") {
       showAlert("success", "Update User Data Successfully");
+      if (photo) {
+        console.log(photo);
+      }
     }
   } catch (error) {
     showAlert("error", error.response.data.message);
@@ -24,10 +27,14 @@ const sendData = async (url, data) => {
 export const updateData = (e) => {
   e.preventDefault();
 
-  const name = selectDataReturnVal("name");
-  const email = selectDataReturnVal("email");
+  const photo = document.getElementById("photo");
 
-  sendData("http://localhost:3000/api/v1/users/updateme", { name, email });
+  const formVal = new FormData();
+  formVal.append("name", selectDataReturnVal("name"));
+  formVal.append("email", selectDataReturnVal("email"));
+  formVal.append("photo", photo.files[0]);
+
+  sendData("http://localhost:3000/api/v1/users/updateme", formVal);
 };
 
 export const updatePasswords = async (e) => {
@@ -51,4 +58,12 @@ export const updatePasswords = async (e) => {
   document.getElementById("password-confirm").textContent = "";
 
   savingButton.textContent = "Save password";
+};
+
+export const changeImgSrc = (e) => {
+  const photoData = e.target.files[0];
+  if (!photoData) return;
+
+  const imgSrc = URL.createObjectURL(photoData);
+  document.querySelector(".form__user-photo").src = imgSrc;
 };
