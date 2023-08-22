@@ -51,7 +51,7 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-export const uploadPhoto = upload.single("photo");
+export const uploadPhoto = upload.single("photo"); // coming data in req.file but array then req.files
 
 export const resizeUserPhoto = (
   req: Request & UserInRequest,

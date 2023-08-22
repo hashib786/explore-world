@@ -9,7 +9,9 @@ import {
   getTour,
   getTourStats,
   getTourWithin,
+  resizeTourImages,
   updateTour,
+  uploadTourImage,
 } from "../controllers/tourController";
 import { protect, restrictTo } from "../controllers/authController";
 import reviewRoutes from "./reviewRoutes";
@@ -37,7 +39,13 @@ router
 router
   .route("/:id")
   .get(getTour)
-  .patch(protect, restrictTo("lead-guide", "admin"), updateTour)
+  .patch(
+    protect,
+    restrictTo("lead-guide", "admin"),
+    uploadTourImage,
+    resizeTourImages,
+    updateTour
+  )
   .delete(protect, restrictTo("lead-guide", "admin"), deleteTour);
 
 // here written this things so avoid repeated code

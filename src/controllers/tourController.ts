@@ -10,6 +10,7 @@ import {
   updateOne,
 } from "./handlerFactory";
 import AppError from "../utils/appError";
+import multer, { FileFilterCallback } from "multer";
 
 export const aliasTopTour = (
   req: Request,
@@ -19,6 +20,39 @@ export const aliasTopTour = (
   req.query.limit = "5";
   req.query.sort = "-ratingsAverage,price";
   req.query.fields = "name,price,ratingsAverage,summary,difficulty";
+  next();
+};
+
+//  saving image file in buffer so i cropt images
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  callback: FileFilterCallback
+) => {
+  if (file.mimetype.startsWith("image")) callback(null, true);
+  else callback(new AppError("Please upload only Image", 403));
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+// upload.single('image') req.file
+// upload.array('images', 5) req.files
+export const uploadTourImage = upload.fields([
+  { name: "imageCover", maxCount: 1 },
+  { name: "images", maxCount: 3 },
+]);
+
+export const resizeTourImages = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log(req.files);
   next();
 };
 
