@@ -1,13 +1,12 @@
-import nodemailer, { TransportOptions, Transporter } from "nodemailer";
-import { mailOptions } from "../interfaces/util";
+import nodemailer, { Transporter } from "nodemailer";
 import IUser from "../interfaces/userInterface";
 import pug from "pug";
 import { currentWorkingDirectory } from "./utility";
 import { htmlToText } from "html-to-text";
 
-type templateOption = "welcome";
+type templateOption = "welcome" | "passwordReset";
 
-export class Email {
+export default class Email {
   public to: string;
   public firstName: string;
   public from: string;
@@ -60,30 +59,11 @@ export class Email {
   public async sendWelcome() {
     await this.send("welcome", "Welcome to the Natours Family!");
   }
+
+  public async sendPasswordReset() {
+    await this.send(
+      "passwordReset",
+      "Your password reset token (valid for only 10 minutes)"
+    );
+  }
 }
-
-export const sendMail = async (option: mailOptions) => {
-  // create a transporter
-  const transporter = nodemailer.createTransport({
-    host: process.env.EAMIL_HOST,
-    port: process.env.EAMIL_PORT,
-    auth: {
-      user: process.env.EAMIL_USERNAME,
-      pass: process.env.EAMIL_PASSWORD,
-    },
-  } as TransportOptions);
-
-  // Defined the email opioin
-  const mailOption = {
-    from: "Hashib Raja <hashibraja23@gmail.com>",
-    to: option.email,
-    subject: option.subject, // Subject line
-    text: option.message, // plain text body
-    html: option.html || "<b>Hello world?</b>", // html body
-  };
-
-  // Actually send the email
-  await transporter.sendMail(mailOption);
-};
-
-export default sendMail;
