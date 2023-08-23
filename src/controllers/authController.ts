@@ -7,7 +7,7 @@ import AppError from "../utils/appError";
 import { Types } from "mongoose";
 import { promisify } from "util";
 import { JWTReturn, UserInRequest } from "../interfaces/util";
-import sendMail from "../utils/email";
+import sendMail, { Email } from "../utils/email";
 import IUser from "../interfaces/userInterface";
 
 const signToken = (id: Types.ObjectId) => {
@@ -66,6 +66,10 @@ export const signUp = catchAsync(
       passwordChangeAt: req.body.passwordChangeAt,
       role: req.body.role,
     });
+
+    const url = `${req.protocol}://${req.get("host")}/me`;
+    console.log(url);
+    await new Email(newUser, url).sendWelcome();
 
     createSendToken(newUser, 201, res);
   }

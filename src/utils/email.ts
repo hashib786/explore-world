@@ -7,7 +7,7 @@ import { htmlToText } from "html-to-text";
 
 type templateOption = "welcome";
 
-class Email {
+export class Email {
   public to: string;
   public firstName: string;
   public from: string;
@@ -36,7 +36,7 @@ class Email {
   public async send(template: templateOption, subject: string) {
     // 1) Render html based on a pug template
     const html = pug.renderFile(
-      `${currentWorkingDirectory}/views/emails/${template}.pug`,
+      `${currentWorkingDirectory}/views/email/${template}.pug`,
       {
         firstName: this.firstName,
         url: this.url,
