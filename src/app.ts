@@ -9,6 +9,7 @@ import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
 import reviewRouter from "./routes/reviewRoutes";
 import viewRouter from "./routes/viewRoutes";
+import bookingRouter from "./routes/bookingRoutes";
 import { currentWorkingDirectory } from "./utils/utility";
 import { join } from "path";
 import errorController from "./controllers/errorController";
@@ -56,6 +57,7 @@ app.use("/", viewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/bookings", bookingRouter);
 
 // Unhandled Routes
 app.all("*", unhandledRoute);
