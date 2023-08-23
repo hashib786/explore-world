@@ -5,7 +5,6 @@ import { currentWorkingDirectory } from "./utility";
 import { htmlToText } from "html-to-text";
 
 type templateOption = "welcome" | "passwordReset";
-
 export default class Email {
   public to: string;
   public firstName: string;
@@ -19,14 +18,26 @@ export default class Email {
 
   // create a transporter
   public newTransport(): Transporter<unknown> {
-    const transporter = nodemailer.createTransport({
-      host: process.env.EAMIL_HOST,
-      port: Number(process.env.EMAIL_PORT),
-      auth: {
-        user: process.env.EAMIL_USERNAME,
-        pass: process.env.EAMIL_PASSWORD,
-      },
-    });
+    const isProduction = process.env.NODE_ENV !== "development";
+    let transporter;
+    if (isProduction) {
+      transporter = nodemailer.createTransport({
+        service: process.env.GEMAIL_HOST,
+        auth: {
+          user: process.env.GEMAIL_USERNAME,
+          pass: process.env.GEMAIL_PASSWORD,
+        },
+      });
+    } else {
+      transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT),
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
+    }
 
     return transporter;
   }
