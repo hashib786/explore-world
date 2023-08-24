@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import IUser from "../interfaces/userInterface";
-import crypto from "node:crypto";
+import crypto from "crypto";
 
 // Create a Mongoose schema for the user
 const userSchema = new Schema<IUser>(
