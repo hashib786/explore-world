@@ -30,6 +30,19 @@ export const getCheckoutSession = catchAsync(
       line_items: [
         {
           price_data: {
+            // for india --> inr
+            currency: "usd",
+            unit_amount: tour.price * 100,
+            product_data: {
+              name: `${tour.name} Tour`,
+              description: tour.summary,
+              images: ["https://avatars.githubusercontent.com/u/108208385?v=4"],
+            },
+          },
+          quantity: 1,
+        },
+        {
+          price_data: {
             currency: "usd",
             unit_amount: tour.price * 100,
             product_data: {
