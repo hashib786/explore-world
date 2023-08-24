@@ -64,3 +64,17 @@ export const createBookingCheckout = catchAsync(
     res.redirect(req.originalUrl.split("?")[0]);
   }
 );
+
+export const getAllBooking = catchAsync(
+  async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
+    const booking = await Booking.find({ user: req.user?._id });
+    const tourIds = booking.map((ele) => ele.tour);
+
+    const tours = await Tour.find({ _id: { $in: tourIds } });
+
+    res.status(200).render("overview", {
+      tittle: "My Tours",
+      tours,
+    });
+  }
+);

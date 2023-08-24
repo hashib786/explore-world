@@ -36,6 +36,8 @@ bookingSchema.pre(
       path: "user",
       select: "name",
     });
+
+    next();
   }
 );
 
