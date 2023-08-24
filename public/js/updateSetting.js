@@ -12,9 +12,6 @@ const sendData = async (url, data, photo) => {
     });
     if (res.data.status === "success") {
       showAlert("success", "Update User Data Successfully");
-      if (photo) {
-        console.log(photo);
-      }
     }
   } catch (error) {
     showAlert("error", error.response.data.message);
@@ -34,7 +31,7 @@ export const updateData = (e) => {
   formVal.append("email", selectDataReturnVal("email"));
   formVal.append("photo", photo.files[0]);
 
-  sendData("http://localhost:3000/api/v1/users/updateme", formVal);
+  sendData("/api/v1/users/updateme", formVal);
 };
 
 export const updatePasswords = async (e) => {
@@ -47,7 +44,7 @@ export const updatePasswords = async (e) => {
   const savingButton = document.querySelector(".btn--save-password");
   savingButton.textContent = "Updating ...";
 
-  await sendData("http://localhost:3000/api/v1/users/updatemypassword", {
+  await sendData("/api/v1/users/updatemypassword", {
     oldPassword,
     password,
     confirmPassword,

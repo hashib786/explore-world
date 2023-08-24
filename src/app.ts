@@ -1,4 +1,4 @@
-import express, { NextFunction, Request } from "express";
+import express from "express";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet"; // The helmet package for Node.js adds vital security-related HTTP headers to your application automatically, fortifying it against prevalent web vulnerabilities.
@@ -14,6 +14,9 @@ import { currentWorkingDirectory } from "./utils/utility";
 import { join } from "path";
 import errorController from "./controllers/errorController";
 import unhandledRoute from "./controllers/404route";
+import compression from "compression";
+
+console.log("Environment --->", process.env.NODE_ENV);
 
 const app = express();
 
@@ -26,6 +29,9 @@ app.use(express.static(join(currentWorkingDirectory, "public")));
 
 // Apply helmet middleware for enhanced security
 app.use(helmet());
+
+// for text compression
+app.use(compression());
 
 // Apply rate limiting middleware for IP-based request limits
 const limiter = rateLimit({

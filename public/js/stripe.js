@@ -10,7 +10,7 @@ export const bookTour = async (e) => {
     const session = await axios(`/api/v1/bookings/checkout-session/${tourId}`);
     location.assign(session.data.session.url);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     showAlert("error", error.response.data.message);
   }
 };
