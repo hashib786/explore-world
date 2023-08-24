@@ -5,6 +5,13 @@ import { UserInRequest } from "../interfaces/util";
 import Stripe from "stripe";
 import AppError from "../utils/appError";
 import Booking from "../models/bookingModel";
+import {
+  createOne,
+  deleteOne,
+  getAll,
+  getOne,
+  updateOne,
+} from "./handlerFactory";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2023-08-16",
@@ -65,7 +72,7 @@ export const createBookingCheckout = catchAsync(
   }
 );
 
-export const getAllBooking = catchAsync(
+export const getUserAllBooking = catchAsync(
   async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
     const booking = await Booking.find({ user: req.user?._id });
     const tourIds = booking.map((ele) => ele.tour);
@@ -78,3 +85,9 @@ export const getAllBooking = catchAsync(
     });
   }
 );
+
+export const getAllBookings = getAll(Booking);
+export const getBooking = getOne(Booking);
+export const createBooking = createOne(Booking);
+export const updateBooking = updateOne(Booking);
+export const deleteBooking = deleteOne(Booking);
