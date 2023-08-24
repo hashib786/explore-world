@@ -46,7 +46,11 @@ export const getCheckoutSession = catchAsync(
             product_data: {
               name: `${tour.name} Tour`,
               description: tour.summary,
-              images: ["https://avatars.githubusercontent.com/u/108208385?v=4"],
+              images: [
+                `${req.protocol}://${req.get("host")}/img/tours/${
+                  tour.imageCover
+                }`,
+              ],
             },
           },
           quantity: 1,
