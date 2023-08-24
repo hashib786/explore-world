@@ -19,7 +19,8 @@ export const getCheckoutSession = catchAsync(
       );
 
     const session = await stripe.checkout.sessions.create({
-      // payment_method_types: ["card", "link", "paypal"],
+      // in method only include which one is shown on your dashboard setting if you want to integrate upi then you need to cantact with customere care in stripe
+      payment_method_types: ["card"],
       mode: "payment",
       success_url: `${req.protocol}://${req.get("host")}/`,
       cancel_url: `${req.protocol}://${req.get("host")}/tour/${tour.slug}`,
