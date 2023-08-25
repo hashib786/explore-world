@@ -4,6 +4,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet"; // The helmet package for Node.js adds vital security-related HTTP headers to your application automatically, fortifying it against prevalent web vulnerabilities.
 import mongoSantize from "express-mongo-sanitize";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
@@ -24,6 +25,8 @@ app.enable("trust proxy");
 
 app.set("view engine", "pug");
 app.set("views", join(currentWorkingDirectory, "views"));
+
+app.use(cors());
 
 // Global Middleware
 // Middleware to serve static files from the "public" directory
