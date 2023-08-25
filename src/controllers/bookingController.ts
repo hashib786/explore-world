@@ -79,6 +79,7 @@ export const getCheckoutSession = catchAsync(
 // );
 
 const createBookingCheckout = async (object: Stripe.Event.Data.Object) => {
+  console.log(object);
   const tour = (object as any).client_reference_id;
   const user = (await User.findOne({ emmail: (object as any).customer_email }))
     ?._id;
@@ -102,6 +103,7 @@ export const webhookCheckout = (
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
+    console.log(event);
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err}`);
   }
