@@ -33,6 +33,13 @@ app.use(cors());
 // Middleware to serve static files from the "public" directory
 app.use(express.static(join(currentWorkingDirectory, "public")));
 
+// Stripe webhook, BEFORE body-parser, because stripe needs the body as stream
+app.post(
+  "/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  webhookCheckout
+);
+
 // Apply helmet middleware for enhanced security
 app.use(helmet());
 
@@ -46,13 +53,6 @@ const limiter = rateLimit({
   message: "Too many requests from the IP, please try again in one hour",
 });
 app.use("/api", limiter);
-
-// Stripe webhook, BEFORE body-parser, because stripe needs the body as stream
-app.post(
-  "/webhook-checkout",
-  express.raw({ type: "application/json" }),
-  webhookCheckout
-);
 
 // Middleware for parsing JSON data and setting a size limit
 app.use(express.json({ limit: "10kb" }));
