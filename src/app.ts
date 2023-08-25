@@ -16,6 +16,7 @@ import { join } from "path";
 import errorController from "./controllers/errorController";
 import unhandledRoute from "./controllers/404route";
 import compression from "compression";
+import { webhookCheckout } from "./controllers/bookingController";
 
 console.log("Environment --->", process.env.NODE_ENV);
 
@@ -46,6 +47,13 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
+// Stripe webhook, BEFORE body-parser, because stripe needs the body as stream
+app.post(
+  "/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  webhookCheckout
+);
+
 // Middleware for parsing JSON data and setting a size limit
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
@@ -59,9 +67,9 @@ app.use(mongoSantize());
 process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 
 // Test Middleware
-app.use((req, res, next) => {
-  next();
-});
+// app.use((req, res, next) => {
+//   next();
+// });
 
 // Routes for tours , users, reviews
 app.use("/", viewRouter);

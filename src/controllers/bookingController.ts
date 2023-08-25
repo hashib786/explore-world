@@ -12,6 +12,7 @@ import {
   getOne,
   updateOne,
 } from "./handlerFactory";
+import User from "../models/userModel";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2023-08-16",
@@ -65,16 +66,50 @@ export const getCheckoutSession = catchAsync(
   }
 );
 
-export const createBookingCheckout = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { tour, user, price } = req.query;
-    if (!tour && !user && !price) return next();
+// export const createBookingCheckout = catchAsync(
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const { tour, user, price } = req.query;
+//     if (!tour && !user && !price) return next();
 
-    await Booking.create({ tour, user, price });
+//     await Booking.create({ tour, user, price });
 
-    res.redirect(req.originalUrl.split("?")[0]);
+//     res.redirect(req.originalUrl.split("?")[0]);
+//   }
+// );
+
+const createBookingCheckout = async (object: Stripe.Event.Data.Object) => {
+  const tour = (object as any).client_reference_id;
+  const user = (await User.findOne({ emmail: (object as any).customer_email }))
+    ?._id;
+  const price = (object as any).display_items[0].amount / 100;
+  await Booking.create({ tour, user, price });
+};
+
+// Documentation --> https://dashboard.stripe.com/test/webhooks/create?endpoint_location=hosted&events=checkout.session.completed
+export const webhookCheckout = (
+  req: Request & UserInRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const signature = req.headers["stripe-signature"];
+  if (typeof signature !== "string")
+    return res.status(400).send(`Webhook Error: Not come in signature`);
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err}`);
   }
-);
+
+  if (event.type === "checkout.session.completed")
+    createBookingCheckout(event.data.object);
+
+  res.status(200).json({ received: true });
+};
 
 export const getUserAllBooking = catchAsync(
   async (req: Request & UserInRequest, res: Response, next: NextFunction) => {
