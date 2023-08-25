@@ -22,7 +22,7 @@ console.log("Environment --->", process.env.NODE_ENV);
 
 const app = express();
 
-app.enable("trust proxy");
+// app.enable("trust proxy");
 
 app.set("view engine", "pug");
 app.set("views", join(currentWorkingDirectory, "views"));

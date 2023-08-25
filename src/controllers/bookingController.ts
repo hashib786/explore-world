@@ -78,13 +78,20 @@ export const getCheckoutSession = catchAsync(
 //   }
 // );
 
-const createBookingCheckout = async (object: Stripe.Event.Data.Object) => {
-  console.log(object);
-  const tour = (object as any).client_reference_id;
-  const user = (await User.findOne({ emmail: (object as any).customer_email }))
-    ?._id;
-  const price = (object as any).display_items[0].amount / 100;
-  await Booking.create({ tour, user, price });
+const createBookingCheckout = async (
+  object: Stripe.Event.Data.Object,
+  res: Response
+) => {
+  // console.log("************", object);
+  try {
+    const tour = (object as any).client_reference_id;
+    const user = (await User.findOne({ email: (object as any).customer_email }))
+      ?._id;
+    const price = (object as any).amount_total / 100;
+    await Booking.create({ tour, user, price });
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err}`);
+  }
 };
 
 // Documentation --> https://dashboard.stripe.com/test/webhooks/create?endpoint_location=hosted&events=checkout.session.completed
@@ -103,13 +110,17 @@ export const webhookCheckout = (
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-    console.log(event);
+    // console.log(event);
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err}`);
   }
 
+  // console.log(event.type);
+  // console.log(event.data.object);
+  // console.log(event.data.object.id);
+
   if (event.type === "checkout.session.completed")
-    createBookingCheckout(event.data.object);
+    createBookingCheckout(event.data.object, res);
 
   res.status(200).json({ received: true });
 };
