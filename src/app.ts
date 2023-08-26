@@ -3,8 +3,8 @@ import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet"; // The helmet package for Node.js adds vital security-related HTTP headers to your application automatically, fortifying it against prevalent web vulnerabilities.
 import mongoSantize from "express-mongo-sanitize";
-import cookieParser from "cookie-parser";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
